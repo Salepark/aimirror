@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import PrivacyDetails from "@/components/PrivacyDetails";
+import PrivacyModal from "@/components/PrivacyModal";
 
 interface ConsentViewProps {
   consentExperience: boolean;
@@ -21,8 +21,8 @@ export default function ConsentView({
   const [showDetails, setShowDetails] = useState(false);
 
   return (
-    <div className="flex h-full w-full flex-col items-center overflow-y-auto bg-black px-6 py-10 text-white">
-      <div className="flex w-full max-w-sm flex-1 flex-col items-center gap-6">
+    <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto bg-black px-6 py-10 text-white">
+      <div className="flex w-full max-w-sm flex-1 flex-col items-center justify-center gap-6">
         <h1 className="text-lg font-light tracking-[0.3em]">PRIVACY & CONSENT</h1>
 
         <label className="flex w-full cursor-pointer items-start gap-3 rounded-2xl border border-white/15 p-4 text-left">
@@ -60,18 +60,12 @@ export default function ConsentView({
 
         <button
           type="button"
-          onClick={() => setShowDetails((prev) => !prev)}
+          onClick={() => setShowDetails(true)}
           className="text-xs font-light tracking-[0.15em] text-white/50 underline underline-offset-4"
         >
-          {showDetails ? "닫기" : "자세히 보기 / PRIVACY DETAILS"}
+          자세히 보기 / PRIVACY DETAILS
         </button>
       </div>
-
-      {showDetails && (
-        <div className="mt-6 w-full max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
-          <PrivacyDetails />
-        </div>
-      )}
 
       <button
         type="button"
@@ -81,6 +75,8 @@ export default function ConsentView({
       >
         CONTINUE
       </button>
+
+      {showDetails && <PrivacyModal onClose={() => setShowDetails(false)} />}
     </div>
   );
 }
