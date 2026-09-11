@@ -5,11 +5,14 @@ import CameraView from "@/components/CameraView";
 import FaceGuide from "@/components/FaceGuide";
 import CaptureButton from "@/components/CaptureButton";
 import Countdown from "@/components/Countdown";
+import WorldReveal from "@/components/WorldReveal";
 import GeneratingView from "@/components/GeneratingView";
 import GeneratedView from "@/components/GeneratedView";
 import ErrorView from "@/components/ErrorView";
 import { useCamera } from "@/hooks/useCamera";
 import { captureFrame } from "@/lib/camera";
+import { selectWorld } from "@/lib/randomWorld";
+import { WORLDS, type WorldPreset } from "@/config/worlds";
 import type { AppState, CameraErrorType } from "@/types/camera";
 import type { GeneratedImage, GenerationError } from "@/types/generation";
 
@@ -39,13 +42,54 @@ const GENERATION_ERROR_MESSAGES = {
   timeout: "The transformation is taking too long.",
 } as const;
 
+type GenerationOutcome =
+  | { ok: true; imageUrl: string }
+  | { ok: false; message: string };
+
+async function runGeneration(blob: Blob, worldId: string): Promise<GenerationOutcome> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
+
+  try {
+    const formData = new FormData();
+    formData.append("image", blob, "capture.jpg");
+    formData.append("worldId", worldId);
+
+    const response = await fetch("/api/transform", {
+      method: "POST",
+      body: formData,
+      signal: controller.signal,
+    });
+
+    if (!response.ok) throw new Error("api");
+
+    const result: { imageUrl?: string } = await response.json();
+    if (!result.imageUrl) throw new Error("api");
+
+    return { ok: true, imageUrl: result.imageUrl };
+  } catch (err) {
+    const category =
+      err instanceof DOMException && err.name === "AbortError"
+        ? "timeout"
+        : err instanceof TypeError
+          ? "network"
+          : "api";
+    return { ok: false, message: GENERATION_ERROR_MESSAGES[category] };
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
 export default function Home() {
   const [appState, setAppState] = useState<AppState>("start");
+  const [selectedWorld, setSelectedWorld] = useState<WorldPreset | null>(null);
+  const [previousWorldId, setPreviousWorldId] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
   const [generationError, setGenerationError] = useState<GenerationError | null>(null);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
+  const generationPromiseRef = useRef<Promise<GenerationOutcome> | null>(null);
   const camera = useCamera();
 
   const setVideoRef = useCallback(
@@ -88,48 +132,44 @@ export default function Home() {
       return;
     }
 
+    const world = selectWorld(WORLDS, previousWorldId ?? undefined);
+    setSelectedWorld(world);
+    setAppState("worldReveal");
+
+    if (process.env.NODE_ENV !== "production") {
+      console.log(`Selected world: ${world.id}`);
+    }
+
+    // Start generation immediately so the API latency overlaps with the
+    // WorldReveal animation instead of stacking after it.
+    generationPromiseRef.current = runGeneration(captured.blob, world.id);
+  }, [previousWorldId]);
+
+  const handleWorldRevealComplete = useCallback(async () => {
     setAppState("generating");
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
+    const promise = generationPromiseRef.current;
+    generationPromiseRef.current = null;
+    if (!promise) return;
 
-    try {
-      const formData = new FormData();
-      formData.append("image", captured.blob, "capture.jpg");
-
-      const response = await fetch("/api/transform", {
-        method: "POST",
-        body: formData,
-        signal: controller.signal,
-      });
-
-      if (!response.ok) throw new Error("api");
-
-      const result: { imageUrl?: string } = await response.json();
-      if (!result.imageUrl) throw new Error("api");
-
-      setGeneratedImage({ imageUrl: result.imageUrl, createdAt: Date.now() });
+    const outcome = await promise;
+    if (outcome.ok) {
+      setGeneratedImage({ imageUrl: outcome.imageUrl, createdAt: Date.now() });
       setAppState("generated");
-    } catch (err) {
-      const category =
-        err instanceof DOMException && err.name === "AbortError"
-          ? "timeout"
-          : err instanceof TypeError
-            ? "network"
-            : "api";
-      setGenerationError({ message: GENERATION_ERROR_MESSAGES[category] });
+    } else {
+      setGenerationError({ message: outcome.message });
       setAppState("error");
-    } finally {
-      clearTimeout(timeoutId);
     }
   }, []);
 
   const handleGenerationRetry = useCallback(() => {
+    setPreviousWorldId(selectedWorld?.id ?? null);
+    setSelectedWorld(null);
     setGeneratedImage(null);
     setGenerationError(null);
     setMinTimeElapsed(false);
     setAppState("camera");
-  }, []);
+  }, [selectedWorld]);
 
   const canCapture = camera.isReady && minTimeElapsed;
   const cameraErrorInfo = camera.error ? CAMERA_ERROR_MESSAGES[camera.error] : null;
@@ -141,7 +181,7 @@ export default function Home() {
           <div className="space-y-3">
             <h1 className="text-4xl font-light tracking-[0.4em]">AI MIRROR</h1>
             <p className="text-sm font-light text-white/70">
-              Discover another version of yourself.
+              Who could you have been?
             </p>
           </div>
           <button
@@ -177,10 +217,18 @@ export default function Home() {
         </>
       )}
 
-      {appState === "generating" && <GeneratingView />}
+      {appState === "worldReveal" && selectedWorld && (
+        <WorldReveal world={selectedWorld} onComplete={handleWorldRevealComplete} />
+      )}
+
+      {appState === "generating" && <GeneratingView world={selectedWorld} />}
 
       {appState === "generated" && generatedImage && (
-        <GeneratedView imageUrl={generatedImage.imageUrl} onRetry={handleGenerationRetry} />
+        <GeneratedView
+          imageUrl={generatedImage.imageUrl}
+          worldLabel={selectedWorld?.resultLabel}
+          onRetry={handleGenerationRetry}
+        />
       )}
 
       {appState === "error" &&

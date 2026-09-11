@@ -1,5 +1,4 @@
 import { fal } from "@fal-ai/client";
-import { RENAISSANCE_PROMPT } from "@/lib/prompts";
 
 // fal-ai/flux-pulid default; kept as a named constant so it's easy to tune later.
 export const GENERATION_CONFIG = {
@@ -17,14 +16,14 @@ function ensureConfigured() {
   configured = true;
 }
 
-export async function generateRenaissancePortrait(image: Blob): Promise<string> {
+export async function generateWorldPortrait(image: Blob, prompt: string): Promise<string> {
   ensureConfigured();
 
   const referenceImageUrl = await fal.storage.upload(image);
 
   const result = await fal.subscribe("fal-ai/flux-pulid", {
     input: {
-      prompt: RENAISSANCE_PROMPT,
+      prompt,
       reference_image_url: referenceImageUrl,
       id_weight: GENERATION_CONFIG.idWeight,
     },

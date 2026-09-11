@@ -4,10 +4,11 @@ import { useState } from "react";
 
 interface GeneratedViewProps {
   imageUrl: string;
+  worldLabel?: string;
   onRetry: () => void;
 }
 
-export default function GeneratedView({ imageUrl, onRetry }: GeneratedViewProps) {
+export default function GeneratedView({ imageUrl, worldLabel, onRetry }: GeneratedViewProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
@@ -17,9 +18,11 @@ export default function GeneratedView({ imageUrl, onRetry }: GeneratedViewProps)
           CREATING ANOTHER YOU
         </p>
       )}
-      <p className="absolute top-10 text-sm font-light tracking-[0.3em] text-white/80">
-        FLORENCE · 1504
-      </p>
+      {worldLabel && (
+        <p className="absolute top-10 text-sm font-light tracking-[0.3em] text-white/80">
+          {worldLabel}
+        </p>
+      )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageUrl}

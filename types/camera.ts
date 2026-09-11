@@ -2,6 +2,7 @@ export type AppState =
   | "start"
   | "camera"
   | "countdown"
+  | "worldReveal"
   | "generating"
   | "generated"
   | "error";
