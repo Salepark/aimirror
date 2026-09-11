@@ -1,4 +1,5 @@
-import { GoogleGenAI, GenerateVideosOperation, VideoGenerationReferenceType } from "@google/genai";
+import { GoogleGenAI, GenerateVideosOperation } from "@google/genai";
+import { saveVideoToBlob } from "@/lib/blob";
 
 const VEO_MODEL = "veo-3.1-generate-preview";
 const GOOGLE_API_KEY_HEADER = "x-goog-api-key";
@@ -35,57 +36,14 @@ async function resolveImageInput(image: string): Promise<{ imageBytes: string; m
 }
 
 export interface StartVeoJobInput {
-  // The generated World still image. Always required: used as the sole
-  // first-frame reference in plain mode, or as the "world" asset reference
-  // (clothing/scene) alongside the face reference in identity mode.
+  // The generated World still image, used as the exact first frame so the
+  // video is a continuation of the same shot rather than a new scene.
   worldImage: string;
-  // The original camera capture. When present, switches to Veo's
-  // referenceImages mode for stronger facial identity preservation.
-  // referenceImages and a first-frame `image` cannot be combined in the
-  // same request (see @google/genai's GenerateVideosConfig.referenceImages
-  // doc comment), so identity mode omits `source.image` entirely.
-  faceReferenceImage?: string;
   motionPrompt: string;
 }
 
-export async function startVeoJob({
-  worldImage,
-  faceReferenceImage,
-  motionPrompt,
-}: StartVeoJobInput): Promise<string> {
+export async function startVeoJob({ worldImage, motionPrompt }: StartVeoJobInput): Promise<string> {
   const ai = getClient();
-
-  if (faceReferenceImage) {
-    const [faceImage, worldRefImage] = await Promise.all([
-      resolveImageInput(faceReferenceImage),
-      resolveImageInput(worldImage),
-    ]);
-
-    const operation = await ai.models.generateVideos({
-      model: VEO_MODEL,
-      source: {
-        prompt: motionPrompt,
-      },
-      config: {
-        referenceImages: [
-          { image: faceImage, referenceType: VideoGenerationReferenceType.ASSET },
-          { image: worldRefImage, referenceType: VideoGenerationReferenceType.ASSET },
-        ],
-        aspectRatio: "9:16",
-        durationSeconds: 8,
-        resolution: "720p",
-        personGeneration: "allow_adult",
-        numberOfVideos: 1,
-      },
-    });
-
-    if (!operation.name) {
-      throw new Error("Veo did not return an operation name");
-    }
-
-    return operation.name;
-  }
-
   const { imageBytes, mimeType } = await resolveImageInput(worldImage);
 
   const operation = await ai.models.generateVideos({
@@ -118,7 +76,7 @@ export type VeoJobStatus =
   | { status: "completed"; videoUrl: string }
   | { status: "error"; message: string };
 
-export async function checkVeoJob(operationName: string): Promise<VeoJobStatus> {
+export async function checkVeoJob(operationName: string, lifeId: string): Promise<VeoJobStatus> {
   const ai = getClient();
 
   const operation = new GenerateVideosOperation();
@@ -139,19 +97,15 @@ export async function checkVeoJob(operationName: string): Promise<VeoJobStatus> 
     return { status: "error", message: "Veo returned no video." };
   }
 
-  const videoUrl = await resolveVideoUrl(video);
+  const buffer = await downloadVideoBuffer(video);
+  const videoUrl = await saveVideoToBlob(buffer, lifeId, video.mimeType ?? "video/mp4");
+
   return { status: "completed", videoUrl };
 }
 
-async function resolveVideoUrl(video: {
-  uri?: string;
-  videoBytes?: string;
-  mimeType?: string;
-}): Promise<string> {
-  const mimeType = video.mimeType ?? "video/mp4";
-
+async function downloadVideoBuffer(video: { uri?: string; videoBytes?: string }): Promise<Buffer> {
   if (video.videoBytes) {
-    return `data:${mimeType};base64,${video.videoBytes}`;
+    return Buffer.from(video.videoBytes, "base64");
   }
 
   if (video.uri) {
@@ -161,8 +115,7 @@ async function resolveVideoUrl(video: {
     if (!response.ok) {
       throw new Error(`Failed to download Veo video: ${response.status}`);
     }
-    const buffer = Buffer.from(await response.arrayBuffer());
-    return `data:${mimeType};base64,${buffer.toString("base64")}`;
+    return Buffer.from(await response.arrayBuffer());
   }
 
   throw new Error("Veo video has neither uri nor videoBytes");

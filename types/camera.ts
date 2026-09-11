@@ -10,7 +10,6 @@ export type AppState =
 export type CameraErrorType = "permission-denied" | "not-found" | "unknown";
 
 export interface CapturedImage {
-  dataUrl: string;
   blob: Blob;
   capturedAt: number;
 }

@@ -53,11 +53,9 @@ export function captureFrame(video: HTMLVideoElement): Promise<CapturedImage | n
   context.scale(-1, 1);
   context.drawImage(video, 0, 0, width, height);
 
-  const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
-
   return new Promise((resolve) => {
     canvas.toBlob(
-      (blob) => resolve(blob ? { dataUrl, blob, capturedAt: Date.now() } : null),
+      (blob) => resolve(blob ? { blob, capturedAt: Date.now() } : null),
       "image/jpeg",
       JPEG_QUALITY
     );

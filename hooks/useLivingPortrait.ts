@@ -10,7 +10,7 @@ interface UseLivingPortraitResult {
   state: LivingPortraitState;
   videoUrl: string | null;
   errorMessage: string | null;
-  start: (image: string, worldId: string, faceReferenceImage?: string) => void;
+  start: (image: string, worldId: string, lifeId: string) => void;
 }
 
 export function useLivingPortrait(): UseLivingPortraitResult {
@@ -18,14 +18,14 @@ export function useLivingPortrait(): UseLivingPortraitResult {
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const pollRef = useRef<(operationName: string, attempt: number) => void>(() => {});
+  const pollRef = useRef<(operationName: string, lifeId: string, attempt: number) => void>(() => {});
 
   useEffect(() => {
-    pollRef.current = (operationName: string, attempt: number) => {
+    pollRef.current = (operationName: string, lifeId: string, attempt: number) => {
       timerRef.current = setTimeout(async () => {
         try {
           const response = await fetch(
-            `/api/video/veo/status?operationName=${encodeURIComponent(operationName)}`
+            `/api/video/veo/status?operationName=${encodeURIComponent(operationName)}&lifeId=${encodeURIComponent(lifeId)}`
           );
           const result = await response.json();
 
@@ -47,7 +47,7 @@ export function useLivingPortrait(): UseLivingPortraitResult {
             return;
           }
 
-          pollRef.current(operationName, attempt + 1);
+          pollRef.current(operationName, lifeId, attempt + 1);
         } catch {
           setErrorMessage("Unable to connect to the animation service.");
           setState("error");
@@ -60,7 +60,7 @@ export function useLivingPortrait(): UseLivingPortraitResult {
     };
   }, []);
 
-  const start = useCallback((image: string, worldId: string, faceReferenceImage?: string) => {
+  const start = useCallback((image: string, worldId: string, lifeId: string) => {
     setState("starting");
     setErrorMessage(null);
     setVideoUrl(null);
@@ -70,7 +70,7 @@ export function useLivingPortrait(): UseLivingPortraitResult {
         const response = await fetch("/api/video/veo/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image, worldId, faceReferenceImage }),
+          body: JSON.stringify({ image, worldId, lifeId }),
         });
         const result = await response.json();
 
@@ -81,7 +81,7 @@ export function useLivingPortrait(): UseLivingPortraitResult {
         }
 
         setState("generating");
-        pollRef.current(result.operationName, 1);
+        pollRef.current(result.operationName, lifeId, 1);
       } catch {
         setErrorMessage("Unable to connect to the animation service.");
         setState("error");
