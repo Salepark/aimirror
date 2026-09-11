@@ -37,21 +37,26 @@ export default function ConsentView({
           </span>
         </label>
 
-        <label className="flex w-full cursor-pointer items-start gap-3 rounded-2xl border border-white/10 p-4 text-left">
-          <input
-            type="checkbox"
-            checked={consentPromotion}
-            onChange={(event) => onChangePromotion(event.target.checked)}
-            className="mt-0.5 h-6 w-6 shrink-0 accent-white"
-          />
-          <span className="text-sm leading-relaxed text-white/60">
-            <span className="text-white/40">[선택]</span> 이 체험에서 생성된 이미지 또는 영상을
-            AI Mirror 작품 소개, 전시, 연구 기록 또는 홍보에 사용하는 것에 동의합니다.
-          </span>
-        </label>
-        <p className="-mt-3 w-full text-left text-[11px] leading-relaxed text-white/35">
-          선택 동의에 동의하지 않아도 AI Mirror 체험에는 아무런 제한이 없습니다.
-        </p>
+        <div className="w-full space-y-2">
+          <p className="text-[11px] font-medium tracking-[0.2em] text-white/40">
+            OPTIONAL / 선택 동의
+          </p>
+          <label className="flex w-full cursor-pointer items-start gap-3 rounded-2xl border border-white/10 p-4 text-left">
+            <input
+              type="checkbox"
+              checked={consentPromotion}
+              onChange={(event) => onChangePromotion(event.target.checked)}
+              className="mt-0.5 h-6 w-6 shrink-0 accent-white"
+            />
+            <span className="text-sm leading-relaxed text-white/60">
+              이 체험에서 생성된 이미지 또는 영상을 AI Mirror 작품 소개, 전시, 연구 기록 또는
+              홍보에 사용하는 것에 동의합니다.
+            </span>
+          </label>
+          <p className="text-left text-[11px] leading-relaxed text-white/35">
+            선택 동의에 동의하지 않아도 AI Mirror 체험에는 아무런 제한이 없습니다.
+          </p>
+        </div>
 
         <button
           type="button"
@@ -60,13 +65,13 @@ export default function ConsentView({
         >
           {showDetails ? "닫기" : "자세히 보기 / PRIVACY DETAILS"}
         </button>
-
-        {showDetails && (
-          <div className="w-full rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-            <PrivacyDetails />
-          </div>
-        )}
       </div>
+
+      {showDetails && (
+        <div className="mt-6 w-full max-w-2xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+          <PrivacyDetails />
+        </div>
+      )}
 
       <button
         type="button"

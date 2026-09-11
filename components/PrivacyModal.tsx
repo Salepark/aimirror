@@ -9,7 +9,7 @@ interface PrivacyModalProps {
 export default function PrivacyModal({ onClose }: PrivacyModalProps) {
   return (
     <div className="absolute inset-0 z-50 flex items-center justify-center bg-black/90 px-6 py-10">
-      <div className="flex max-h-full w-full max-w-sm flex-col overflow-y-auto rounded-2xl border border-white/10 bg-black p-5">
+      <div className="flex max-h-full w-full max-w-2xl flex-col overflow-y-auto rounded-2xl border border-white/10 bg-black p-6 sm:p-8">
         <PrivacyDetails />
         <button
           type="button"
