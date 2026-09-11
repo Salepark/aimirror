@@ -1,4 +1,7 @@
-import type { CameraErrorType } from "@/types/camera";
+import type { CameraErrorType, CapturedImage } from "@/types/camera";
+
+const MAX_LONG_SIDE = 1536;
+const JPEG_QUALITY = 0.9;
 
 export const CAMERA_CONSTRAINTS: MediaStreamConstraints = {
   video: {
@@ -21,21 +24,42 @@ export function getCameraErrorType(error: unknown): CameraErrorType {
   return "unknown";
 }
 
-export function captureFrameToDataUrl(video: HTMLVideoElement): string | null {
+function getScaledDimensions(width: number, height: number, maxLongSide: number) {
+  const longSide = Math.max(width, height);
+  if (longSide <= maxLongSide) return { width, height };
+
+  const scale = maxLongSide / longSide;
+  return {
+    width: Math.round(width * scale),
+    height: Math.round(height * scale),
+  };
+}
+
+export function captureFrame(video: HTMLVideoElement): Promise<CapturedImage | null> {
   const { videoWidth, videoHeight } = video;
-  if (!videoWidth || !videoHeight) return null;
+  if (!videoWidth || !videoHeight) return Promise.resolve(null);
+
+  const { width, height } = getScaledDimensions(videoWidth, videoHeight, MAX_LONG_SIDE);
 
   const canvas = document.createElement("canvas");
-  canvas.width = videoWidth;
-  canvas.height = videoHeight;
+  canvas.width = width;
+  canvas.height = height;
 
   const context = canvas.getContext("2d");
-  if (!context) return null;
+  if (!context) return Promise.resolve(null);
 
   // Mirror the capture so the saved image matches what the user saw in the preview.
   context.translate(canvas.width, 0);
   context.scale(-1, 1);
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+  context.drawImage(video, 0, 0, width, height);
 
-  return canvas.toDataURL("image/jpeg", 0.9);
+  const dataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+
+  return new Promise((resolve) => {
+    canvas.toBlob(
+      (blob) => resolve(blob ? { dataUrl, blob, capturedAt: Date.now() } : null),
+      "image/jpeg",
+      JPEG_QUALITY
+    );
+  });
 }

@@ -5,16 +5,20 @@ import CameraView from "@/components/CameraView";
 import FaceGuide from "@/components/FaceGuide";
 import CaptureButton from "@/components/CaptureButton";
 import Countdown from "@/components/Countdown";
-import CapturedView from "@/components/CapturedView";
+import GeneratingView from "@/components/GeneratingView";
+import GeneratedView from "@/components/GeneratedView";
+import ErrorView from "@/components/ErrorView";
 import { useCamera } from "@/hooks/useCamera";
-import { captureFrameToDataUrl } from "@/lib/camera";
-import type { AppState, CapturedImage, CameraErrorType } from "@/types/camera";
+import { captureFrame } from "@/lib/camera";
+import type { AppState, CameraErrorType } from "@/types/camera";
+import type { GeneratedImage, GenerationError } from "@/types/generation";
 
 const COUNTDOWN_SECONDS = 3;
 const MIN_READY_DELAY_MS = 1000;
-const FLASH_DURATION_MS = 150;
+const FLASH_HOLD_MS = 150;
+const GENERATION_TIMEOUT_MS = 90_000;
 
-const ERROR_MESSAGES: Record<CameraErrorType, { title: string; body: string }> = {
+const CAMERA_ERROR_MESSAGES: Record<CameraErrorType, { title: string; body: string }> = {
   "permission-denied": {
     title: "Camera access is required.",
     body: "Please allow camera access in your browser settings.",
@@ -29,9 +33,16 @@ const ERROR_MESSAGES: Record<CameraErrorType, { title: string; body: string }> =
   },
 };
 
+const GENERATION_ERROR_MESSAGES = {
+  network: "Unable to connect to the AI service.",
+  api: "Unable to create your portrait.",
+  timeout: "The transformation is taking too long.",
+} as const;
+
 export default function Home() {
   const [appState, setAppState] = useState<AppState>("start");
-  const [capturedImage, setCapturedImage] = useState<CapturedImage | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
+  const [generationError, setGenerationError] = useState<GenerationError | null>(null);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
@@ -65,29 +76,63 @@ export default function Home() {
     setAppState("countdown");
   }, []);
 
-  const handleCountdownComplete = useCallback(() => {
+  const handleCountdownComplete = useCallback(async () => {
     const video = videoElementRef.current;
-    const dataUrl = video ? captureFrameToDataUrl(video) : null;
+    const captured = video ? await captureFrame(video) : null;
 
     setShowFlash(true);
-    setTimeout(() => setShowFlash(false), FLASH_DURATION_MS);
+    setTimeout(() => setShowFlash(false), FLASH_HOLD_MS);
 
-    if (dataUrl) {
-      setCapturedImage({ dataUrl, capturedAt: Date.now() });
-      setAppState("captured");
-    } else {
+    if (!captured) {
       setAppState("camera");
+      return;
+    }
+
+    setAppState("generating");
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
+
+    try {
+      const formData = new FormData();
+      formData.append("image", captured.blob, "capture.jpg");
+
+      const response = await fetch("/api/transform", {
+        method: "POST",
+        body: formData,
+        signal: controller.signal,
+      });
+
+      if (!response.ok) throw new Error("api");
+
+      const result: { imageUrl?: string } = await response.json();
+      if (!result.imageUrl) throw new Error("api");
+
+      setGeneratedImage({ imageUrl: result.imageUrl, createdAt: Date.now() });
+      setAppState("generated");
+    } catch (err) {
+      const category =
+        err instanceof DOMException && err.name === "AbortError"
+          ? "timeout"
+          : err instanceof TypeError
+            ? "network"
+            : "api";
+      setGenerationError({ message: GENERATION_ERROR_MESSAGES[category] });
+      setAppState("error");
+    } finally {
+      clearTimeout(timeoutId);
     }
   }, []);
 
-  const handleRetry = useCallback(() => {
-    setCapturedImage(null);
+  const handleGenerationRetry = useCallback(() => {
+    setGeneratedImage(null);
+    setGenerationError(null);
     setMinTimeElapsed(false);
     setAppState("camera");
   }, []);
 
   const canCapture = camera.isReady && minTimeElapsed;
-  const errorInfo = camera.error ? ERROR_MESSAGES[camera.error] : null;
+  const cameraErrorInfo = camera.error ? CAMERA_ERROR_MESSAGES[camera.error] : null;
 
   return (
     <main className="relative h-dvh w-full overflow-hidden bg-black text-white">
@@ -113,6 +158,9 @@ export default function Home() {
           >
             ENTER FULLSCREEN
           </button>
+          <p className="max-w-xs text-[11px] font-light leading-relaxed text-white/30">
+            Your photo will be temporarily sent to an AI image service to create your portrait.
+          </p>
         </div>
       )}
 
@@ -129,22 +177,29 @@ export default function Home() {
         </>
       )}
 
-      {appState === "captured" && capturedImage && (
-        <CapturedView dataUrl={capturedImage.dataUrl} onRetry={handleRetry} />
+      {appState === "generating" && <GeneratingView />}
+
+      {appState === "generated" && generatedImage && (
+        <GeneratedView imageUrl={generatedImage.imageUrl} onRetry={handleGenerationRetry} />
       )}
 
-      {appState === "error" && errorInfo && (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center">
-          <p className="text-lg font-medium">{errorInfo.title}</p>
-          {errorInfo.body && (
-            <p className="text-sm font-light text-white/70">{errorInfo.body}</p>
-          )}
-        </div>
-      )}
+      {appState === "error" &&
+        (cameraErrorInfo ? (
+          <div className="flex h-full w-full flex-col items-center justify-center gap-3 px-6 text-center">
+            <p className="text-lg font-medium">{cameraErrorInfo.title}</p>
+            {cameraErrorInfo.body && (
+              <p className="text-sm font-light text-white/70">{cameraErrorInfo.body}</p>
+            )}
+          </div>
+        ) : (
+          generationError && (
+            <ErrorView message={generationError.message} onRetry={handleGenerationRetry} />
+          )
+        ))}
 
       <div
-        className="pointer-events-none absolute inset-0 bg-white transition-opacity duration-150"
-        style={{ opacity: showFlash ? 0.8 : 0 }}
+        className="pointer-events-none absolute inset-0 bg-white transition-opacity duration-500"
+        style={{ opacity: showFlash ? 0.9 : 0 }}
       />
     </main>
   );
