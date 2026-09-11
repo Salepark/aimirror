@@ -3,7 +3,7 @@ import { generateOpenAiPortrait } from "@/lib/openai-image";
 import { buildOpenAiPrompt } from "@/lib/openaiPrompt";
 import { WORLDS } from "@/config/worlds";
 
-export const maxDuration = 90;
+export const maxDuration = 60; // Vercel Hobby plan cap
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 

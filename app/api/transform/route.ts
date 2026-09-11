@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { generateWorldPortrait } from "@/lib/fal";
 import { WORLDS } from "@/config/worlds";
 
-export const maxDuration = 90;
+export const maxDuration = 60; // Vercel Hobby plan cap
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 

@@ -20,7 +20,7 @@ import type { GeneratedImage, GenerationError } from "@/types/generation";
 const COUNTDOWN_SECONDS = 3;
 const MIN_READY_DELAY_MS = 1000;
 const FLASH_HOLD_MS = 150;
-const GENERATION_TIMEOUT_MS = 90_000;
+const GENERATION_TIMEOUT_MS = 55_000; // stay under the server's 60s Vercel Hobby cap
 const RECENT_WORLDS_LIMIT = 3;
 
 const CAMERA_ERROR_MESSAGES: Record<CameraErrorType, { title: string; body: string }> = {
