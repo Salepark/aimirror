@@ -1,4 +1,4 @@
-import { GoogleGenAI, GenerateVideosOperation } from "@google/genai";
+import { GoogleGenAI, GenerateVideosOperation, VideoGenerationReferenceType } from "@google/genai";
 
 const VEO_MODEL = "veo-3.1-generate-preview";
 const GOOGLE_API_KEY_HEADER = "x-goog-api-key";
@@ -35,13 +35,58 @@ async function resolveImageInput(image: string): Promise<{ imageBytes: string; m
 }
 
 export interface StartVeoJobInput {
-  image: string;
+  // The generated World still image. Always required: used as the sole
+  // first-frame reference in plain mode, or as the "world" asset reference
+  // (clothing/scene) alongside the face reference in identity mode.
+  worldImage: string;
+  // The original camera capture. When present, switches to Veo's
+  // referenceImages mode for stronger facial identity preservation.
+  // referenceImages and a first-frame `image` cannot be combined in the
+  // same request (see @google/genai's GenerateVideosConfig.referenceImages
+  // doc comment), so identity mode omits `source.image` entirely.
+  faceReferenceImage?: string;
   motionPrompt: string;
 }
 
-export async function startVeoJob({ image, motionPrompt }: StartVeoJobInput): Promise<string> {
+export async function startVeoJob({
+  worldImage,
+  faceReferenceImage,
+  motionPrompt,
+}: StartVeoJobInput): Promise<string> {
   const ai = getClient();
-  const { imageBytes, mimeType } = await resolveImageInput(image);
+
+  if (faceReferenceImage) {
+    const [faceImage, worldRefImage] = await Promise.all([
+      resolveImageInput(faceReferenceImage),
+      resolveImageInput(worldImage),
+    ]);
+
+    const operation = await ai.models.generateVideos({
+      model: VEO_MODEL,
+      source: {
+        prompt: motionPrompt,
+      },
+      config: {
+        referenceImages: [
+          { image: faceImage, referenceType: VideoGenerationReferenceType.ASSET },
+          { image: worldRefImage, referenceType: VideoGenerationReferenceType.ASSET },
+        ],
+        aspectRatio: "9:16",
+        durationSeconds: 8,
+        resolution: "720p",
+        personGeneration: "allow_adult",
+        numberOfVideos: 1,
+      },
+    });
+
+    if (!operation.name) {
+      throw new Error("Veo did not return an operation name");
+    }
+
+    return operation.name;
+  }
+
+  const { imageBytes, mimeType } = await resolveImageInput(worldImage);
 
   const operation = await ai.models.generateVideos({
     model: VEO_MODEL,

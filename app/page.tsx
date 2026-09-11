@@ -97,6 +97,7 @@ export default function Home() {
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
   const [lastProvider, setLastProvider] = useState<ImageProvider | null>(null);
+  const [capturedDataUrl, setCapturedDataUrl] = useState<string | null>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const generationPromiseRef = useRef<Promise<GenerationOutcome> | null>(null);
   const camera = useCamera();
@@ -145,6 +146,7 @@ export default function Home() {
     const provider = getDebugProvider();
     setSelectedWorld(world);
     setLastProvider(provider);
+    setCapturedDataUrl(captured.dataUrl);
     setAppState("worldReveal");
 
     if (process.env.NODE_ENV !== "production") {
@@ -180,6 +182,7 @@ export default function Home() {
     setSelectedWorld(null);
     setGeneratedImage(null);
     setGenerationError(null);
+    setCapturedDataUrl(null);
     setMinTimeElapsed(false);
     setAppState("camera");
   }, [selectedWorld]);
@@ -242,6 +245,8 @@ export default function Home() {
           worldId={selectedWorld?.id}
           worldLabel={selectedWorld?.resultLabel}
           roleLabel={selectedWorld?.role}
+          livingEffect={selectedWorld?.livingEffect}
+          faceReferenceImage={capturedDataUrl ?? undefined}
           debugProviderLabel={
             lastProvider && isProviderDebugActive() ? PROVIDER_LABELS[lastProvider] : undefined
           }

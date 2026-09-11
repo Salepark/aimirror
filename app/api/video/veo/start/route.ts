@@ -7,6 +7,7 @@ export const maxDuration = 60;
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const image = body?.image;
+  const faceReferenceImage = body?.faceReferenceImage;
   const worldId = body?.worldId;
 
   if (typeof image !== "string" || !image) {
@@ -19,7 +20,11 @@ export async function POST(request: Request) {
   }
 
   try {
-    const operationName = await startVeoJob({ image, motionPrompt: world.motionPrompt });
+    const operationName = await startVeoJob({
+      worldImage: image,
+      faceReferenceImage: typeof faceReferenceImage === "string" ? faceReferenceImage : undefined,
+      motionPrompt: world.motionPrompt,
+    });
     return NextResponse.json({ operationName });
   } catch (error) {
     console.error("Veo start failed:", error);

@@ -10,7 +10,7 @@ interface UseLivingPortraitResult {
   state: LivingPortraitState;
   videoUrl: string | null;
   errorMessage: string | null;
-  start: (image: string, worldId: string) => void;
+  start: (image: string, worldId: string, faceReferenceImage?: string) => void;
 }
 
 export function useLivingPortrait(): UseLivingPortraitResult {
@@ -60,7 +60,7 @@ export function useLivingPortrait(): UseLivingPortraitResult {
     };
   }, []);
 
-  const start = useCallback((image: string, worldId: string) => {
+  const start = useCallback((image: string, worldId: string, faceReferenceImage?: string) => {
     setState("starting");
     setErrorMessage(null);
     setVideoUrl(null);
@@ -70,7 +70,7 @@ export function useLivingPortrait(): UseLivingPortraitResult {
         const response = await fetch("/api/video/veo/start", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ image, worldId }),
+          body: JSON.stringify({ image, worldId, faceReferenceImage }),
         });
         const result = await response.json();
 

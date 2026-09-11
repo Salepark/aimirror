@@ -1,3 +1,9 @@
+export interface LivingEffectConfig {
+  type: string;
+  intensity?: number;
+  cameraMotion?: "push-in" | "pull-back" | "minimal";
+}
+
 export interface WorldPreset {
   id: string;
   title: string;
@@ -12,6 +18,9 @@ export interface WorldPreset {
   // Reserved for v0.5 (living-portrait video). Stored now, never sent to any
   // API in v0.4 — do not wire this into a generation call.
   motionPrompt: string;
+
+  // v0.5.2 default living-portrait effect: zero-cost, browser-side only.
+  livingEffect: LivingEffectConfig;
 }
 
 export const WORLDS: WorldPreset[] = [
@@ -67,6 +76,7 @@ Workers move subtly in the distant background.
 The rolled architectural drawing shifts slightly in the person's hand.
 Very slow cinematic camera push-in.
 Preserve facial identity.`,
+    livingEffect: { type: "florence-dust", cameraMotion: "push-in" },
   },
   {
     id: "joseon-1792",
@@ -121,6 +131,7 @@ They take one slow step forward and glance toward the palace gate.
 Lantern flames flicker.
 A distant palace guard crosses through the mist.
 Slow cinematic tracking movement.`,
+    livingEffect: { type: "joseon-snow", cameraMotion: "push-in" },
   },
   {
     id: "paris-1889",
@@ -170,6 +181,7 @@ Gas lamps flicker.
 People move through the mist.
 Reflections shimmer across the wet street.
 Slow camera arc around the subject.`,
+    livingEffect: { type: "paris-rain", cameraMotion: "push-in" },
   },
   {
     id: "new-york-1925",
@@ -218,6 +230,7 @@ Smoke drifts upward.
 Musicians move subtly in the background.
 Warm lights flicker on brass instruments.
 Camera gently follows down the staircase.`,
+    livingEffect: { type: "newyork-smoke", cameraMotion: "push-in" },
   },
   {
     id: "seoul-2089",
@@ -272,13 +285,59 @@ Avoid Blade Runner imitation.
 Avoid neon cyberpunk clichés.
 
 This should feel like Seoul actually continued evolving for another 60 years.`,
-    motionPrompt: `Heavy rain moves across the scene.
-The person's long coat and hair move in strong wind.
-They slowly turn toward a distant section of the city.
-Aerial vehicles pass far behind.
-Digital surfaces flicker.
-Lightning briefly illuminates the skyline.
-Slow camera push toward the subject.`,
+    motionPrompt: `Preserve the exact recognizable identity of the person shown
+in the supplied reference images.
+
+The person must remain unmistakably the same individual
+throughout the entire video.
+
+Do not redesign the face.
+Do not change facial proportions.
+Do not change age.
+Do not change hairstyle.
+Do not create a generic substitute person.
+
+The person remains almost completely still.
+
+No head turn.
+No speaking.
+No walking.
+No major facial-expression change.
+
+Allow only:
+- subtle natural breathing
+- very slight eye movement
+- one natural blink if appropriate
+
+Most motion happens in the environment:
+
+Heavy rain moves through the Seoul skyline.
+The person's coat responds subtly to wind.
+Distant aerial vehicles move slowly.
+Lightning briefly illuminates the clouds.
+City lights and reflections shift naturally.
+
+Camera movement:
+extremely slow cinematic push-in only.
+
+The visual composition and wardrobe should remain
+consistent with the supplied Seoul world image.
+
+Priority order:
+
+1. facial identity
+2. composition preservation
+3. clothing consistency
+4. environmental motion
+5. camera motion
+
+If any motion would harm facial identity,
+reduce the motion instead.
+
+Same identity.
+Same world.
+Minimal human motion.`,
+    livingEffect: { type: "seoul-storm", cameraMotion: "push-in" },
   },
   {
     id: "mars-2164",
@@ -344,6 +403,7 @@ Warning lights begin flashing on distant habitat structures.
 Subtle breathing movement inside the suit.
 Slow cinematic camera push-in.
 Preserve the person's facial identity.`,
+    livingEffect: { type: "mars-dust", cameraMotion: "push-in" },
   },
   {
     id: "ink-world",
@@ -398,6 +458,7 @@ Mist moves between distant mountains.
 Wet ink blooms slowly across the paper landscape.
 The person raises their hand slightly and watches it transform.
 Extremely slow camera movement.`,
+    livingEffect: { type: "ink-diffusion", cameraMotion: "minimal" },
   },
   {
     id: "pop-world",
@@ -445,6 +506,7 @@ Printed halftone patterns shift subtly.
 The person slowly turns, noticing another giant image of themselves.
 Pedestrians move as simplified graphic silhouettes.
 Camera slowly rotates through the surreal intersection.`,
+    livingEffect: { type: "pop-halftone", cameraMotion: "minimal" },
   },
   {
     id: "baroque-1642",
@@ -498,6 +560,7 @@ Their clothing moves subtly as they walk.
 A distant shadow crosses the far end of the corridor.
 The sealed letter shifts in their hand.
 Camera slowly tracks backward.`,
+    livingEffect: { type: "baroque-candle", cameraMotion: "push-in" },
   },
   {
     id: "unknown-civilization",
@@ -616,5 +679,6 @@ Do not transform the image into a new shot.
 The desired effect is uncanny and subtle:
 
 a still portrait has quietly become alive.`,
+    livingEffect: { type: "unknown-haze", cameraMotion: "pull-back" },
   },
 ];
