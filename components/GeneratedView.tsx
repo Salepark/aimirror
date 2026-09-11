@@ -5,6 +5,7 @@ import { useState } from "react";
 interface GeneratedViewProps {
   imageUrl: string;
   worldLabel?: string;
+  roleLabel?: string;
   debugProviderLabel?: string;
   onRetry: () => void;
 }
@@ -12,6 +13,7 @@ interface GeneratedViewProps {
 export default function GeneratedView({
   imageUrl,
   worldLabel,
+  roleLabel,
   debugProviderLabel,
   onRetry,
 }: GeneratedViewProps) {
@@ -25,9 +27,14 @@ export default function GeneratedView({
         </p>
       )}
       {worldLabel && (
-        <p className="absolute top-10 text-sm font-light tracking-[0.3em] text-white/80">
-          {worldLabel}
-        </p>
+        <div className="absolute top-10 flex flex-col items-center gap-1">
+          <p className="text-sm font-light tracking-[0.3em] text-white/80">{worldLabel}</p>
+          {roleLabel && (
+            <p className="text-[10px] font-light uppercase tracking-[0.2em] text-white/40">
+              {roleLabel}
+            </p>
+          )}
+        </div>
       )}
       {debugProviderLabel && (
         <p className="absolute bottom-28 text-[10px] font-light tracking-[0.2em] text-white/30">
@@ -37,7 +44,7 @@ export default function GeneratedView({
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={imageUrl}
-        alt="Renaissance portrait"
+        alt="Cinematic portrait"
         onLoad={() => setIsLoaded(true)}
         className={`max-h-full max-w-full object-contain transition-opacity duration-500 ${
           isLoaded ? "opacity-100" : "opacity-0"
@@ -46,9 +53,10 @@ export default function GeneratedView({
       <button
         type="button"
         onClick={onRetry}
-        className="absolute bottom-12 rounded-full bg-white px-10 py-4 text-base font-medium tracking-wide text-black"
+        className="absolute bottom-12 rounded-full bg-white px-8 py-4 text-sm font-medium tracking-wide text-black sm:px-10 sm:text-base"
       >
-        Try Again
+        <span className="sm:hidden">ANOTHER LIFE</span>
+        <span className="hidden sm:inline">DISCOVER ANOTHER LIFE</span>
       </button>
     </div>
   );

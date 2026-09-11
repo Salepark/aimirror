@@ -21,6 +21,7 @@ const COUNTDOWN_SECONDS = 3;
 const MIN_READY_DELAY_MS = 1000;
 const FLASH_HOLD_MS = 150;
 const GENERATION_TIMEOUT_MS = 90_000;
+const RECENT_WORLDS_LIMIT = 3;
 
 const CAMERA_ERROR_MESSAGES: Record<CameraErrorType, { title: string; body: string }> = {
   "permission-denied": {
@@ -90,7 +91,7 @@ async function runGeneration(
 export default function Home() {
   const [appState, setAppState] = useState<AppState>("start");
   const [selectedWorld, setSelectedWorld] = useState<WorldPreset | null>(null);
-  const [previousWorldId, setPreviousWorldId] = useState<string | null>(null);
+  const [recentWorldIds, setRecentWorldIds] = useState<string[]>([]);
   const [generatedImage, setGeneratedImage] = useState<GeneratedImage | null>(null);
   const [generationError, setGenerationError] = useState<GenerationError | null>(null);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
@@ -140,7 +141,7 @@ export default function Home() {
       return;
     }
 
-    const world = selectWorld(WORLDS, previousWorldId ?? undefined);
+    const world = selectWorld(WORLDS, recentWorldIds);
     const provider = getDebugProvider();
     setSelectedWorld(world);
     setLastProvider(provider);
@@ -153,7 +154,7 @@ export default function Home() {
     // Start generation immediately so the API latency overlaps with the
     // WorldReveal animation instead of stacking after it.
     generationPromiseRef.current = runGeneration(captured.blob, world.id, provider);
-  }, [previousWorldId]);
+  }, [recentWorldIds]);
 
   const handleWorldRevealComplete = useCallback(async () => {
     setAppState("generating");
@@ -173,7 +174,9 @@ export default function Home() {
   }, []);
 
   const handleGenerationRetry = useCallback(() => {
-    setPreviousWorldId(selectedWorld?.id ?? null);
+    setRecentWorldIds((prev) =>
+      selectedWorld ? [selectedWorld.id, ...prev].slice(0, RECENT_WORLDS_LIMIT) : prev
+    );
     setSelectedWorld(null);
     setGeneratedImage(null);
     setGenerationError(null);
@@ -237,6 +240,7 @@ export default function Home() {
         <GeneratedView
           imageUrl={generatedImage.imageUrl}
           worldLabel={selectedWorld?.resultLabel}
+          roleLabel={selectedWorld?.role}
           debugProviderLabel={
             lastProvider && isProviderDebugActive() ? PROVIDER_LABELS[lastProvider] : undefined
           }

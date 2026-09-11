@@ -11,8 +11,8 @@ interface WorldRevealProps {
 type Phase = "searching" | "found" | "reveal";
 
 const PHASE_DURATIONS_MS: Record<Phase, number> = {
-  searching: 1000,
-  found: 700,
+  searching: 900,
+  found: 600,
   reveal: 1200,
 };
 
@@ -46,16 +46,14 @@ export default function WorldReveal({ world, onComplete }: WorldRevealProps) {
         </p>
       )}
       {phase === "found" && (
-        <p className="text-sm font-light tracking-[0.3em] text-white/70">WORLD FOUND</p>
+        <p className="text-sm font-light tracking-[0.3em] text-white/70">ANOTHER LIFE FOUND</p>
       )}
       {phase === "reveal" && (
         <>
-          <p className="text-3xl font-light tracking-[0.3em] text-white">{world.title}</p>
-          {(world.location || world.year) && (
-            <p className="text-sm font-light tracking-[0.2em] text-white/60">
-              {[world.location, world.year].filter(Boolean).join(" · ")}
-            </p>
-          )}
+          <p className="text-3xl font-light tracking-[0.3em] text-white">{world.resultLabel}</p>
+          <p className="text-xs font-light uppercase tracking-[0.2em] text-white/50">
+            {world.role}
+          </p>
         </>
       )}
     </div>

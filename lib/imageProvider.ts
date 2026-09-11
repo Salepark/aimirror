@@ -17,13 +17,16 @@ export const PROVIDER_LABELS: Record<ImageProvider, string> = {
   openai: "OPENAI · GPT-IMAGE-2.5 FLARE",
 };
 
-// Dev convenience: force a provider via ?provider=openai for A/B testing.
+// v0.4: OpenAI is the primary engine. PuLID stays selectable as a dev fallback.
+export const DEFAULT_PROVIDER: ImageProvider = "openai";
+
+// Dev convenience: force a provider via ?provider=pulid to fall back to PuLID.
 // Never surfaced in the production UI.
 export function getDebugProvider(): ImageProvider {
-  if (typeof window === "undefined") return "pulid";
-  return new URLSearchParams(window.location.search).get("provider") === "openai"
-    ? "openai"
-    : "pulid";
+  if (typeof window === "undefined") return DEFAULT_PROVIDER;
+  return new URLSearchParams(window.location.search).get("provider") === "pulid"
+    ? "pulid"
+    : DEFAULT_PROVIDER;
 }
 
 export function isProviderDebugActive(): boolean {

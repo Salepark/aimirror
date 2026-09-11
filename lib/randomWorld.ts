@@ -1,11 +1,7 @@
 import type { WorldPreset } from "@/config/worlds";
 
-export function getRandomWorld(
-  worlds: WorldPreset[],
-  previousWorldId?: string
-): WorldPreset {
-  const candidates =
-    worlds.length > 1 ? worlds.filter((world) => world.id !== previousWorldId) : worlds;
+export function getRandomWorld(worlds: WorldPreset[], excludeIds: string[] = []): WorldPreset {
+  const candidates = worlds.filter((world) => !excludeIds.includes(world.id));
 
   const pool = candidates.length > 0 ? candidates : worlds;
   const index = Math.floor(Math.random() * pool.length);
@@ -20,9 +16,9 @@ function getDebugWorldId(): string | null {
   return new URLSearchParams(window.location.search).get("world");
 }
 
-export function selectWorld(worlds: WorldPreset[], previousWorldId?: string): WorldPreset {
+export function selectWorld(worlds: WorldPreset[], excludeIds: string[] = []): WorldPreset {
   const debugId = getDebugWorldId();
   const debugWorld = debugId ? worlds.find((world) => world.id === debugId) : undefined;
 
-  return debugWorld ?? getRandomWorld(worlds, previousWorldId);
+  return debugWorld ?? getRandomWorld(worlds, excludeIds);
 }

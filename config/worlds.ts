@@ -1,267 +1,573 @@
 export interface WorldPreset {
   id: string;
   title: string;
-  subtitle: string;
-  location?: string;
   year?: string;
-  prompt: string;
   resultLabel: string;
+
+  role: string;
+  event: string;
+
+  imagePrompt: string;
+
+  // Reserved for v0.5 (living-portrait video). Stored now, never sent to any
+  // API in v0.4 — do not wire this into a generation call.
+  motionPrompt: string;
 }
 
 export const WORLDS: WorldPreset[] = [
   {
     id: "florence-1504",
     title: "FLORENCE",
-    subtitle: "Merchant of the Renaissance",
-    location: "Florence",
     year: "1504",
     resultLabel: "FLORENCE · 1504",
-    prompt: `Create a museum-quality Renaissance oil portrait of the reference person.
+    role: "Florentine architect and intellectual",
+    event: "At dawn, checking on the construction site of a great unfinished cathedral.",
+    imagePrompt: `FLORENCE, 1504.
 
-Preserve the person's exact facial identity, facial structure, eyes, nose,
-mouth, age characteristics, ethnicity and recognizability.
+Transform the same person into a respected Florentine architect,
+scholar and patron during the height of the Renaissance.
 
-Transform the person into a wealthy Florentine citizen in the year 1504.
+It is early morning.
 
-Dress them in luxurious early 16th-century Italian Renaissance garments,
-rich velvet, layered fabrics, elegant tailoring and historically inspired details.
+The person is walking through a monumental Renaissance construction site,
+carrying rolled architectural drawings and a leather-bound notebook.
 
-Place them inside a refined Florentine palazzo with subtle stone architecture.
+Stonecutters and craftsmen work in the distance.
+Scaffolding rises above unfinished classical architecture.
 
-Lighting should use soft window light and refined chiaroscuro.
+The person's clothing is historically convincing:
+deep luxurious Renaissance fabric,
+layered wool and velvet,
+fine tailoring,
+weathered naturally by daily life.
 
-The visual result should feel like an authentic Renaissance masterpiece,
-not a modern costume photograph.
+A cool Tuscan dawn enters through enormous stone arches.
 
-Oil painting texture, fine brushwork, deep tonal range, museum portrait.
+The subject has stopped momentarily and looks toward an unfinished structure,
+as if reconsidering an important architectural decision.
 
-The result must unmistakably look like the same person.`,
+Three-quarter-body environmental portrait.
+Subject slightly off-center.
+Natural body posture.
+Subtle movement in clothing.
+
+Warm sunlight begins touching the distant stone
+while the foreground remains softly shadowed.
+
+Visually combine the psychological depth of Renaissance portraiture
+with the scale and realism of contemporary cinematic photography.
+
+Do not create a museum portrait against a plain background.
+
+We have caught this person in the middle of a real morning in Florence.`,
+    motionPrompt: `The person slowly raises their eyes toward the unfinished architecture.
+Morning light gradually enters the stone corridor.
+Dust particles drift through the light.
+Workers move subtly in the distant background.
+The rolled architectural drawing shifts slightly in the person's hand.
+Very slow cinematic camera push-in.
+Preserve facial identity.`,
   },
   {
     id: "joseon-1792",
     title: "JOSEON",
-    subtitle: "Court of King Jeongjo",
-    location: "Korea",
     year: "1792",
     resultLabel: "JOSEON · 1792",
-    prompt: `Create a dignified late-Joseon dynasty portrait of the reference person.
+    role: "Royal scholar-official",
+    event: "At snowy dawn, rushing to the palace with an urgent report.",
+    imagePrompt: `HANYANG, JOSEON DYNASTY, 1792.
 
-Preserve the person's facial identity, age, ethnicity and recognizability.
-
-Transform clothing and setting into Korea in the year 1792,
+Transform the same person into a respected Joseon scholar-official
 during the reign of King Jeongjo.
 
-Dress the subject in historically inspired Joseon formal clothing,
-refined silk fabrics, restrained colors and traditional details.
+It is dawn after fresh snowfall.
 
-Use the visual language of traditional Korean royal and scholar portraiture,
-combined with subtle realistic depth.
+The person is walking quickly toward the palace
+carrying a carefully wrapped royal report.
 
-Background should be minimal, elegant and historically appropriate.
+Dress the subject in historically convincing Joseon official clothing
+appropriate to the period and role,
+including a proper traditional hat and layered winter garments.
 
-Avoid fantasy costume design.
+Do not create fantasy-Korean costume.
 
-The person must clearly remain recognizable as the same individual.`,
+Fine snow falls through the air.
+
+Traditional tiled roofs and palace walls disappear into cold morning mist.
+
+A few lanterns still glow.
+
+The person's expression is serious and purposeful.
+Something important has happened.
+
+Capture the subject mid-step rather than posing.
+
+Three-quarter-body cinematic composition.
+Slightly low camera.
+Fabric moves subtly with the winter wind.
+
+Cold blue-gray dawn contrasted with warm lantern light.
+
+The image should feel like a frame from an exceptionally well-researched
+historical Korean feature film.
+
+Not a royal portrait.
+Not a costume photograph.
+
+This person has somewhere urgent to be.`,
+    motionPrompt: `Fine snow continues falling.
+The person's robe and hat straps move gently in the winter wind.
+They take one slow step forward and glance toward the palace gate.
+Lantern flames flicker.
+A distant palace guard crosses through the mist.
+Slow cinematic tracking movement.`,
   },
   {
     id: "paris-1889",
     title: "PARIS",
-    subtitle: "Belle Époque Citizen",
-    location: "Paris",
     year: "1889",
     resultLabel: "PARIS · 1889",
-    prompt: `Transform the reference person into a sophisticated Parisian citizen in 1889.
+    role: "Writer and intellectual",
+    event: "On the night the Eiffel Tower is lit for the first time.",
+    imagePrompt: `PARIS, 1889.
 
-Preserve the person's facial identity and recognizability exactly.
+Transform the same person into a Parisian writer and intellectual
+during the Exposition Universelle.
 
-Dress them in elegant Belle Époque fashion with refined tailoring.
+Night has just fallen.
 
-The environment should evoke Paris during the Exposition Universelle,
-with warm atmospheric lighting and subtle late-19th-century architecture.
+The person has stepped from a horse-drawn carriage
+onto a rain-wet Paris street.
 
-Create a painterly portrait influenced by refined French academic painting
-and early modern portrait photography.
+Behind them, the newly completed Eiffel Tower glows dramatically
+through mist for the first time.
 
-Elegant, atmospheric, cinematic, historically believable.
+Crowds gather in astonishment.
+Carriages move past.
+Gas lamps reflect on wet pavement.
 
-The same person must remain unmistakably recognizable.`,
+Dress the person in sophisticated late-19th-century Parisian clothing,
+historically believable and naturally worn.
+
+The person turns slightly toward the illuminated tower,
+caught between disbelief and fascination.
+
+Do not make them stare directly at the camera.
+
+Medium-wide environmental portrait.
+Off-center composition.
+
+Wet street reflections.
+Atmospheric Paris fog.
+Warm gaslight against cool evening blue.
+
+The scene should feel like a lost cinematic moment from 1889,
+not a vintage studio photograph.`,
+    motionPrompt: `The person slowly turns toward the illuminated Eiffel Tower.
+Rain falls lightly.
+Horse carriages pass in the background.
+Gas lamps flicker.
+People move through the mist.
+Reflections shimmer across the wet street.
+Slow camera arc around the subject.`,
   },
   {
     id: "new-york-1925",
     title: "NEW YORK",
-    subtitle: "Jazz Age Citizen",
-    location: "New York",
     year: "1925",
     resultLabel: "NEW YORK · 1925",
-    prompt: `Transform the reference person into a stylish New Yorker in 1925.
+    role: "Jazz Age composer and musician",
+    event: "Descending into a Harlem jazz club as the band starts playing their song.",
+    imagePrompt: `NEW YORK CITY, 1925.
 
-Preserve facial identity, age and ethnicity.
+Transform the same person into a composer and musician
+during the height of the Jazz Age.
 
-Dress the subject in refined Jazz Age clothing,
-with period-appropriate tailoring and subtle Art Deco influence.
+The person is descending a narrow staircase
+into a crowded underground Harlem jazz club.
 
-Set the portrait inside an elegant Manhattan interior
-with warm tungsten lighting and hints of Art Deco architecture.
+Music and cigarette smoke rise from below.
 
-Create a cinematic portrait with early 20th-century photographic character,
-rich contrast and sophisticated atmosphere.
+Musicians prepare on stage.
+Silhouettes of dancers move beyond the stairway.
 
-Do not make the face generic.
+Dress the person in an elegant but lived-in 1920s evening suit,
+period-correct tailoring and accessories.
 
-The subject must clearly remain the same person.`,
+They hold a folded musical score in one hand.
+
+The subject pauses halfway down the stairs,
+hearing the band begin to play their composition.
+
+Dynamic diagonal composition.
+Three-quarter-body.
+Camera positioned slightly below stair level.
+
+Warm tungsten club light rises from below,
+while cooler street light remains behind.
+
+Smoke, brass reflections and deep shadows create visual depth.
+
+This is a backstage moment before something important happens.
+
+Not an Art Deco fashion shoot.
+Not a studio portrait.`,
+    motionPrompt: `The person slowly descends one step.
+They look toward the stage as the music begins.
+Smoke drifts upward.
+Musicians move subtly in the background.
+Warm lights flicker on brass instruments.
+Camera gently follows down the staircase.`,
   },
   {
     id: "seoul-2089",
     title: "SEOUL",
-    subtitle: "Citizen of the Future",
-    location: "Seoul",
     year: "2089",
     resultLabel: "SEOUL · 2089",
-    prompt: `Transform the reference person into a citizen of Seoul in the year 2089.
+    role: "Urban systems architect",
+    event: "On an elevated walkway during a storm, spotting a citywide system failure.",
+    imagePrompt: `SEOUL, 2089.
 
-Preserve facial identity, age characteristics and ethnicity.
+Transform the same person into an urban systems architect
+living in Seoul near the end of the 21st century.
 
-Create sophisticated futuristic clothing,
-advanced smart textiles, subtle luminous materials,
-minimal wearable technology and elegant Korean-influenced future design.
+A powerful summer storm is passing through the city at night.
 
-Avoid generic cyberpunk clichés.
+The person stands on a transparent elevated pedestrian bridge
+hundreds of meters above Seoul.
 
-The background should show a believable future Seoul,
-layered vertical architecture, ambient digital surfaces,
-subtle Hangul-inspired visual systems and atmospheric city light.
+They have just noticed something unusual happening across the city.
 
-The image should feel sophisticated, humane and plausible,
-not dystopian.
+The person wears a sophisticated long coat
+made from programmable technical textile,
+with subtle embedded interfaces and Korean-influenced structural design.
 
-Cinematic future portrait.
+Avoid generic cyberpunk clothing.
 
-The face must remain clearly recognizable as the same person.`,
+Hair and coat move strongly in the storm wind.
+
+Behind them:
+vast vertical neighborhoods,
+autonomous aerial transit,
+layered pedestrian systems,
+rain-covered architecture,
+subtle Hangul information displays
+and distant mountains barely visible beyond the city.
+
+Lightning illuminates the clouds.
+
+The person turns away from the camera,
+looking toward a distant section of the city that has suddenly gone dark.
+
+Wide environmental portrait.
+Three-quarter profile.
+Strong foreground/background depth.
+
+Rain streaks across the lens.
+Reflections move across glass surfaces.
+
+Sophisticated, believable Korean future design.
+
+Avoid Blade Runner imitation.
+Avoid neon cyberpunk clichés.
+
+This should feel like Seoul actually continued evolving for another 60 years.`,
+    motionPrompt: `Heavy rain moves across the scene.
+The person's long coat and hair move in strong wind.
+They slowly turn toward a distant section of the city.
+Aerial vehicles pass far behind.
+Digital surfaces flicker.
+Lightning briefly illuminates the skyline.
+Slow camera push toward the subject.`,
   },
   {
     id: "mars-2164",
     title: "MARS",
-    subtitle: "Settler of the Red Planet",
-    location: "Mars",
     year: "2164",
     resultLabel: "MARS · 2164",
-    prompt: `Transform the reference person into a human resident of Mars in 2164.
+    role: "Exploration commander",
+    event: "Caught outside the settlement as a massive dust storm approaches.",
+    imagePrompt: `MARS, 2164.
 
-Preserve exact facial identity and recognizability.
+Transform the same person into the commander of a Mars exploration team.
 
-Dress the subject in sophisticated lightweight Martian habitat clothing,
-advanced environmental fabrics and subtle life-support technology.
+The person is outside the settlement
+when an enormous dust storm begins approaching across the horizon.
 
-Avoid bulky astronaut suits unless visually necessary.
+They wear a complete advanced Mars EVA pressure suit.
 
-Show a refined Martian settlement interior,
-with red terrain visible through architectural glass.
+A sealed transparent pressurized helmet is mandatory.
 
-Lighting should combine warm Martian sunlight
-with controlled interior illumination.
+The face must remain clearly visible through the visor
+and unmistakably recognizable as the reference person.
 
-The portrait should feel scientifically plausible,
-quiet, intelligent and deeply human.
+The helmet includes realistic seals,
+communications hardware,
+environmental sensors and subtle heads-up reflections.
 
-The person must unmistakably remain the same individual.`,
+The EVA suit contains visible life-support systems,
+technical layers, joints and equipment,
+showing dust and signs of actual field use.
+
+No exposed head.
+No casual clothing.
+
+The person has stopped during an expedition
+and is looking toward the approaching storm.
+
+Behind them:
+a large Martian settlement,
+pressurized habitat structures,
+rovers returning toward the base,
+communication towers,
+distant mountains disappearing into red atmospheric dust.
+
+Powerful Martian sunset breaks through the storm.
+
+Dust moves violently around the person's boots and suit.
+
+Three-quarter or near-full-body composition.
+Slightly low camera angle.
+Subject not perfectly centered.
+
+This must feel like an expensive science-fiction feature film
+grounded in plausible Mars exploration technology.
+
+Not a portrait of someone wearing a spacesuit.
+
+This person is actually trying to survive on Mars.`,
+    motionPrompt: `The astronaut slowly turns toward the approaching dust storm.
+Fine red dust blows across the EVA suit.
+Reflections move across the transparent helmet visor.
+A rover moves quickly toward the settlement behind them.
+Warning lights begin flashing on distant habitat structures.
+Subtle breathing movement inside the suit.
+Slow cinematic camera push-in.
+Preserve the person's facial identity.`,
   },
   {
     id: "ink-world",
     title: "INK WORLD",
-    subtitle: "A Figure of Ink and Mist",
     resultLabel: "INK WORLD",
-    prompt: `Reimagine the reference person inside a poetic East Asian ink-wash world.
+    role: "A traveler through a world made of ink",
+    event: "Their surroundings, and their own body, begin dissolving into ink.",
+    imagePrompt: `INK WORLD.
 
-Preserve the person's facial identity and recognizability.
+The same recognizable person stands inside a vast East Asian ink landscape.
 
-Render the face with enough detail to remain clearly identifiable,
-while allowing clothing, hair, atmosphere and environment
-to dissolve into expressive black ink and water.
+This is not simply an ink-style portrait.
 
-Surround the figure with mist, mountains, empty space
-and flowing brush gestures.
+The physical world itself is made from ink, water and paper.
 
-Use restrained monochrome ink tones,
-subtle paper texture and expressive calligraphic energy.
+The person's face remains sufficiently realistic and recognizable,
+but their clothing gradually dissolves into expressive black brush strokes.
 
-Avoid cartoon or anime rendering.
+One side of the body begins transforming into flowing ink.
 
-The result should feel like a contemporary museum-scale ink artwork
-while clearly preserving the same person.`,
+Behind the person,
+enormous mountains emerge from washes of black pigment and mist.
+
+Water becomes empty white paper.
+Clouds become bleeding ink.
+Birds appear as single calligraphic gestures.
+
+The person looks toward their own hand,
+realizing that it too is beginning to dissolve into ink.
+
+Asymmetrical composition.
+Large negative space.
+Full or three-quarter body.
+
+Extremely restrained palette:
+black ink,
+warm paper,
+subtle gray washes.
+
+Physical ink texture,
+water blooms,
+dry-brush marks,
+pigment edges.
+
+Do not create anime.
+Do not create a normal photograph with an ink filter.
+
+Reality itself is becoming a painting.`,
+    motionPrompt: `Ink slowly spreads from the person's sleeve into the surrounding air.
+Brush strokes drift away from the body.
+Mist moves between distant mountains.
+Wet ink blooms slowly across the paper landscape.
+The person raises their hand slightly and watches it transform.
+Extremely slow camera movement.`,
   },
   {
     id: "pop-world",
     title: "POP WORLD",
-    subtitle: "Icon of the Pop Era",
+    year: "1968",
     resultLabel: "POP WORLD",
-    prompt: `Transform the reference person into a bold pop-art portrait.
+    role: "A person whose face has become mass media",
+    event: "Discovering their own face reproduced across every screen in the city.",
+    imagePrompt: `POP WORLD, ALTERNATE 1968.
 
-Preserve facial identity and recognizability.
+Preserve the person's recognizable facial identity,
+but transform reality into a living graphic media environment.
 
-Use strong graphic shapes, simplified tonal areas,
-screen-print texture, halftone patterns and energetic composition.
+The person stands in a surreal city intersection.
 
-Draw inspiration from the visual language of 1960s pop art
-without directly copying any specific copyrighted artwork.
+Huge billboards, newspapers, television screens
+and product packages surrounding them
+all contain stylized variations of their own face.
 
-Clothing and background may become highly graphic and stylized.
+The subject looks around,
+confused by the endless reproduction of their identity.
 
-The face must remain identifiable as the same person.
+Use bold graphic areas,
+screen-print textures,
+halftone patterns,
+misregistration,
+commercial typography fragments
+and strong visual rhythm.
 
-Museum-quality contemporary pop portrait.`,
+The person's physical body remains dimensional,
+while the surrounding world increasingly becomes flat graphic media.
+
+Dynamic wide composition.
+Urban movement.
+Strong perspective.
+
+Do not directly reproduce any specific existing artwork.
+
+Do not create a simple four-panel portrait.
+
+The idea is:
+a person discovers that the entire culture has turned their identity into an image.`,
+    motionPrompt: `Billboards flicker between different graphic versions of the person's face.
+Printed halftone patterns shift subtly.
+The person slowly turns, noticing another giant image of themselves.
+Pedestrians move as simplified graphic silhouettes.
+Camera slowly rotates through the surreal intersection.`,
   },
   {
     id: "baroque-1642",
-    title: "BAROQUE",
-    subtitle: "Aristocrat of Europe",
-    location: "Europe",
+    title: "EUROPE",
     year: "1642",
     resultLabel: "EUROPE · 1642",
-    prompt: `Create a dramatic European Baroque portrait of the reference person in 1642.
+    role: "Senior diplomat on the eve of war",
+    event: "Carrying a sealed letter down a candlelit palace corridor at night.",
+    imagePrompt: `EUROPE, 1642.
 
-Preserve exact facial identity and recognizability.
+Transform the same person into a senior diplomat
+during a dangerous period of 17th-century European conflict.
 
-Dress the subject in sophisticated 17th-century aristocratic clothing,
-rich dark fabrics and refined period details.
+It is late at night inside a vast palace.
 
-Use powerful chiaroscuro,
-deep black background,
-dramatic directional light
-and painterly realism.
+The person walks alone through a candlelit corridor,
+holding a sealed diplomatic letter.
 
-The result should feel monumental, serious and museum-worthy.
+They have just received information
+that could alter the course of a war.
 
-Avoid theatrical costume photography.
+Dress the subject in historically convincing
+17th-century European court clothing,
+rich dark fabric,
+restrained aristocratic detail,
+natural wear and physical texture.
 
-The face must unmistakably remain the same person.`,
+Do not create theatrical costume.
+
+The person turns slightly,
+as if hearing footsteps behind them.
+
+Strong directional candlelight.
+Deep chiaroscuro.
+Large areas disappearing into darkness.
+
+Three-quarter-body composition.
+Long architectural perspective behind the person.
+
+Candles recede through the corridor.
+The sealed letter remains visible but not dominant.
+
+The visual language may evoke the psychological intensity
+and dramatic lighting of great Baroque painting,
+while remaining a believable cinematic event.
+
+Something dangerous is happening outside the frame.`,
+    motionPrompt: `The person slows and glances over their shoulder.
+Candle flames flicker.
+Their clothing moves subtly as they walk.
+A distant shadow crosses the far end of the corridor.
+The sealed letter shifts in their hand.
+Camera slowly tracks backward.`,
   },
   {
     id: "unknown-civilization",
     title: "UNKNOWN",
-    subtitle: "Citizen of a Forgotten Future",
-    year: "7,842",
+    year: "7842",
     resultLabel: "UNKNOWN · YEAR 7,842",
-    prompt: `Transform the reference person into a citizen of an unknown human civilization
-in the year 7842.
+    role: "The last person to wake from the 21st century",
+    event: "Waking after 5,800 years to witness a civilization beyond human recognition.",
+    imagePrompt: `UNKNOWN EARTH, YEAR 7842.
 
-Preserve exact facial identity, age characteristics and recognizability.
+The same person is a human being from the early 21st century
+who has awakened after approximately 5,800 years of suspended animation.
 
-The world should feel unfamiliar but believable.
+Preserve the person's recognizable identity.
 
-Create clothing, architecture and materials that do not resemble
-standard cyberpunk, medieval fantasy or conventional science fiction.
+They stand at the threshold of an ancient recovery chamber.
 
-Use elegant unfamiliar textiles,
-organic engineered surfaces,
-subtle symbolic systems,
-advanced but quiet technology
-and a calm monumental atmosphere.
+Their clothing combines remnants of old human technology
+with unfamiliar materials placed on them by an unknown civilization.
 
-The image should feel archaeological,
-as if this future civilization has already existed for thousands of years.
+The chamber opens onto an unimaginably vast city.
 
-The person must clearly remain the same individual.
+But this is not a conventional futuristic city.
 
-Create a mysterious, beautiful and museum-quality portrait.`,
+Human civilization has disappeared or transformed beyond recognition.
+
+Enormous structures appear partly grown,
+partly engineered,
+partly geological.
+
+Architecture operates on scales that make the person appear small.
+
+There are no recognizable cars,
+skyscrapers,
+cyberpunk signs
+or familiar science-fiction clichés.
+
+Unfamiliar living structures move slowly in the distance.
+
+Strange atmospheric phenomena illuminate the horizon.
+
+The person takes their first step outside the chamber
+and looks upward.
+
+Their expression is not fear.
+It is incomprehension and awe.
+
+Wide cinematic composition.
+The human figure occupies a relatively small but clearly visible portion of the frame.
+
+Use monumental scale,
+deep atmospheric perspective
+and unfamiliar physical materials.
+
+The scene should feel simultaneously archaeological and futuristic,
+as if we are looking at the ruins of a future
+that lasted thousands of years.
+
+Do not explain the civilization visually.
+Preserve mystery.
+
+This person remembers our world.
+
+Nothing around them does.`,
+    motionPrompt: `The person takes one slow step out of the ancient chamber.
+Their eyes rise toward the enormous structures above.
+Distant living architecture moves almost imperceptibly.
+Fine particles float through unfamiliar atmospheric light.
+A vast shadow slowly crosses the landscape.
+Camera gradually pulls backward,
+revealing how small the human being is within this civilization.`,
   },
 ];

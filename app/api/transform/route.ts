@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   try {
     const start = performance.now();
-    const imageUrl = await generateWorldPortrait(image, world.prompt);
+    const imageUrl = await generateWorldPortrait(image, world.imagePrompt);
 
     if (process.env.NODE_ENV !== "production") {
       console.log(`Generation completed for "${world.id}": ${((performance.now() - start) / 1000).toFixed(1)}s`);
