@@ -73,9 +73,12 @@ export async function startVeoJob({ worldImage, motionPrompt }: StartVeoJobInput
 
 export type VeoJobStatus =
   | { status: "generating" }
-  | { status: "completed"; videoUrl: string }
+  | { status: "completed" }
   | { status: "error"; message: string };
 
+// Note: "completed" carries no URL. The video is uploaded to a *private*
+// Blob here, and the client fetches a short-lived signed URL separately via
+// GET /api/media/signed-url — see lib/blob.ts.
 export async function checkVeoJob(operationName: string, lifeId: string): Promise<VeoJobStatus> {
   const ai = getClient();
 
@@ -98,9 +101,9 @@ export async function checkVeoJob(operationName: string, lifeId: string): Promis
   }
 
   const buffer = await downloadVideoBuffer(video);
-  const videoUrl = await saveVideoToBlob(buffer, lifeId, video.mimeType ?? "video/mp4");
+  await saveVideoToBlob(buffer, lifeId, video.mimeType ?? "video/mp4");
 
-  return { status: "completed", videoUrl };
+  return { status: "completed" };
 }
 
 async function downloadVideoBuffer(video: { uri?: string; videoBytes?: string }): Promise<Buffer> {

@@ -1,5 +1,6 @@
 export type AppState =
   | "start"
+  | "consent"
   | "camera"
   | "countdown"
   | "worldReveal"

@@ -29,8 +29,19 @@ export function useLivingPortrait(): UseLivingPortraitResult {
           );
           const result = await response.json();
 
-          if (result.status === "completed" && result.videoUrl) {
-            setVideoUrl(result.videoUrl);
+          if (result.status === "completed") {
+            const signedResponse = await fetch(
+              `/api/media/signed-url?lifeId=${encodeURIComponent(lifeId)}`
+            );
+            const signedResult = await signedResponse.json();
+
+            if (!signedResponse.ok || !signedResult.playbackUrl) {
+              setErrorMessage(signedResult.error ?? "Unable to prepare playback.");
+              setState("error");
+              return;
+            }
+
+            setVideoUrl(signedResult.playbackUrl);
             setState("completed");
             return;
           }

@@ -9,6 +9,8 @@ import WorldReveal from "@/components/WorldReveal";
 import GeneratingView from "@/components/GeneratingView";
 import GeneratedView from "@/components/GeneratedView";
 import ErrorView from "@/components/ErrorView";
+import ConsentView from "@/components/ConsentView";
+import PrivacyModal from "@/components/PrivacyModal";
 import { useCamera } from "@/hooks/useCamera";
 import { captureFrame } from "@/lib/camera";
 import { selectWorld } from "@/lib/randomWorld";
@@ -98,6 +100,9 @@ export default function Home() {
   const [showFlash, setShowFlash] = useState(false);
   const [lastProvider, setLastProvider] = useState<ImageProvider | null>(null);
   const [lifeId, setLifeId] = useState<string | null>(null);
+  const [consentExperience, setConsentExperience] = useState(false);
+  const [consentPromotion, setConsentPromotion] = useState(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const generationPromiseRef = useRef<Promise<GenerationOutcome> | null>(null);
   const camera = useCamera();
@@ -116,11 +121,16 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, [appState]);
 
-  const handleEnter = useCallback(async () => {
+  const handleBeginExperience = useCallback(() => {
+    setAppState("consent");
+  }, []);
+
+  const handleConsentContinue = useCallback(async () => {
+    if (!consentExperience) return;
     const errorType = await camera.start();
     setMinTimeElapsed(false);
     setAppState(errorType ? "error" : "camera");
-  }, [camera]);
+  }, [camera, consentExperience]);
 
   const handleEnterFullscreen = useCallback(() => {
     document.documentElement.requestFullscreen?.().catch(() => {});
@@ -196,16 +206,19 @@ export default function Home() {
         <div className="flex h-full w-full flex-col items-center justify-center gap-8 px-6 text-center">
           <div className="space-y-3">
             <h1 className="text-4xl font-light tracking-[0.4em]">AI MIRROR</h1>
-            <p className="text-sm font-light text-white/70">
-              Who could you have been?
+            <p className="text-xs font-light tracking-[0.3em] text-white/60">
+              SAME IDENTITY. DIFFERENT LIFE.
+            </p>
+            <p className="max-w-xs text-sm font-light leading-relaxed text-white/50">
+              AI Mirror creates an alternate version of you using AI-generated imagery.
             </p>
           </div>
           <button
             type="button"
-            onClick={handleEnter}
+            onClick={handleBeginExperience}
             className="rounded-full border border-white/60 px-12 py-3 text-sm font-medium tracking-[0.2em]"
           >
-            ENTER
+            BEGIN EXPERIENCE
           </button>
           <button
             type="button"
@@ -214,10 +227,24 @@ export default function Home() {
           >
             ENTER FULLSCREEN
           </button>
-          <p className="max-w-xs text-[11px] font-light leading-relaxed text-white/30">
-            Your photo will be temporarily sent to an AI image service to create your portrait.
-          </p>
+          <button
+            type="button"
+            onClick={() => setShowPrivacyModal(true)}
+            className="text-[10px] font-light tracking-[0.2em] text-white/30 underline underline-offset-4"
+          >
+            PRIVACY
+          </button>
         </div>
+      )}
+
+      {appState === "consent" && (
+        <ConsentView
+          consentExperience={consentExperience}
+          consentPromotion={consentPromotion}
+          onChangeExperience={setConsentExperience}
+          onChangePromotion={setConsentPromotion}
+          onContinue={handleConsentContinue}
+        />
       )}
 
       {(appState === "camera" || appState === "countdown") && (
@@ -240,18 +267,27 @@ export default function Home() {
       {appState === "generating" && <GeneratingView world={selectedWorld} />}
 
       {appState === "generated" && generatedImage && (
-        <GeneratedView
-          imageUrl={generatedImage.imageUrl}
-          worldId={selectedWorld?.id}
-          worldLabel={selectedWorld?.resultLabel}
-          roleLabel={selectedWorld?.role}
-          livingEffect={selectedWorld?.livingEffect}
-          lifeId={lifeId ?? undefined}
-          debugProviderLabel={
-            lastProvider && isProviderDebugActive() ? PROVIDER_LABELS[lastProvider] : undefined
-          }
-          onRetry={handleGenerationRetry}
-        />
+        <>
+          <GeneratedView
+            imageUrl={generatedImage.imageUrl}
+            worldId={selectedWorld?.id}
+            worldLabel={selectedWorld?.resultLabel}
+            roleLabel={selectedWorld?.role}
+            livingEffect={selectedWorld?.livingEffect}
+            lifeId={lifeId ?? undefined}
+            debugProviderLabel={
+              lastProvider && isProviderDebugActive() ? PROVIDER_LABELS[lastProvider] : undefined
+            }
+            onRetry={handleGenerationRetry}
+          />
+          <button
+            type="button"
+            onClick={() => setShowPrivacyModal(true)}
+            className="absolute bottom-2 left-1/2 -translate-x-1/2 text-[10px] font-light tracking-[0.2em] text-white/25 underline underline-offset-4"
+          >
+            PRIVACY
+          </button>
+        </>
       )}
 
       {appState === "error" &&
@@ -267,6 +303,8 @@ export default function Home() {
             <ErrorView message={generationError.message} onRetry={handleGenerationRetry} />
           )
         ))}
+
+      {showPrivacyModal && <PrivacyModal onClose={() => setShowPrivacyModal(false)} />}
 
       <div
         className="pointer-events-none absolute inset-0 bg-white transition-opacity duration-500"
