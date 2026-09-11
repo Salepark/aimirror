@@ -239,6 +239,7 @@ export default function Home() {
       {appState === "generated" && generatedImage && (
         <GeneratedView
           imageUrl={generatedImage.imageUrl}
+          worldId={selectedWorld?.id}
           worldLabel={selectedWorld?.resultLabel}
           roleLabel={selectedWorld?.role}
           debugProviderLabel={

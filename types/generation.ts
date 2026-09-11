@@ -6,3 +6,5 @@ export interface GeneratedImage {
 export interface GenerationError {
   message: string;
 }
+
+export type LivingPortraitState = "idle" | "starting" | "generating" | "completed" | "error";

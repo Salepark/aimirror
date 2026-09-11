@@ -562,12 +562,59 @@ Preserve mystery.
 This person remembers our world.
 
 Nothing around them does.`,
-    motionPrompt: `The person takes one slow step out of the ancient chamber.
-Their eyes rise toward the enormous structures above.
-Distant living architecture moves almost imperceptibly.
-Fine particles float through unfamiliar atmospheric light.
-A vast shadow slowly crosses the landscape.
-Camera gradually pulls backward,
-revealing how small the human being is within this civilization.`,
+    motionPrompt: `The scene begins exactly from the supplied still image.
+
+Preserve the person's facial identity, age, clothing,
+body proportions, environment and overall composition.
+
+For the first moment, almost nothing moves.
+
+The person's eyes slowly shift upward.
+
+Their head tilts upward only very slightly,
+as if noticing something impossibly large above them.
+
+Natural subtle breathing only.
+
+The person's clothing moves gently
+in an unfamiliar atmospheric breeze.
+
+Fine luminous particles drift slowly through the air.
+
+Very far in the background,
+the enormous living structures move almost imperceptibly.
+
+Clouds and atmospheric light shift very slowly.
+
+During the final part of the shot,
+the camera begins an extremely slow pull-back,
+subtly revealing the monumental scale of the environment.
+
+Movement must remain restrained,
+realistic and cinematic.
+
+Do not make the person walk.
+
+Do not make the person speak.
+
+Do not change the person's facial identity.
+
+Do not change hairstyle.
+
+Do not change clothing.
+
+Do not add a new character.
+
+Do not add new foreground objects.
+
+Do not redesign the architecture.
+
+Do not dramatically change camera angle.
+
+Do not transform the image into a new shot.
+
+The desired effect is uncanny and subtle:
+
+a still portrait has quietly become alive.`,
   },
 ];
