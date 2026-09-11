@@ -5,10 +5,16 @@ import { useState } from "react";
 interface GeneratedViewProps {
   imageUrl: string;
   worldLabel?: string;
+  debugProviderLabel?: string;
   onRetry: () => void;
 }
 
-export default function GeneratedView({ imageUrl, worldLabel, onRetry }: GeneratedViewProps) {
+export default function GeneratedView({
+  imageUrl,
+  worldLabel,
+  debugProviderLabel,
+  onRetry,
+}: GeneratedViewProps) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
@@ -21,6 +27,11 @@ export default function GeneratedView({ imageUrl, worldLabel, onRetry }: Generat
       {worldLabel && (
         <p className="absolute top-10 text-sm font-light tracking-[0.3em] text-white/80">
           {worldLabel}
+        </p>
+      )}
+      {debugProviderLabel && (
+        <p className="absolute bottom-28 text-[10px] font-light tracking-[0.2em] text-white/30">
+          {debugProviderLabel}
         </p>
       )}
       {/* eslint-disable-next-line @next/next/no-img-element */}

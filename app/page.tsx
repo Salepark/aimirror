@@ -12,6 +12,7 @@ import ErrorView from "@/components/ErrorView";
 import { useCamera } from "@/hooks/useCamera";
 import { captureFrame } from "@/lib/camera";
 import { selectWorld } from "@/lib/randomWorld";
+import { getDebugProvider, isProviderDebugActive, PROVIDER_LABELS, type ImageProvider } from "@/lib/imageProvider";
 import { WORLDS, type WorldPreset } from "@/config/worlds";
 import type { AppState, CameraErrorType } from "@/types/camera";
 import type { GeneratedImage, GenerationError } from "@/types/generation";
@@ -46,7 +47,11 @@ type GenerationOutcome =
   | { ok: true; imageUrl: string }
   | { ok: false; message: string };
 
-async function runGeneration(blob: Blob, worldId: string): Promise<GenerationOutcome> {
+async function runGeneration(
+  blob: Blob,
+  worldId: string,
+  provider: ImageProvider
+): Promise<GenerationOutcome> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), GENERATION_TIMEOUT_MS);
 
@@ -55,7 +60,9 @@ async function runGeneration(blob: Blob, worldId: string): Promise<GenerationOut
     formData.append("image", blob, "capture.jpg");
     formData.append("worldId", worldId);
 
-    const response = await fetch("/api/transform", {
+    const endpoint = provider === "openai" ? "/api/transform/openai" : "/api/transform";
+
+    const response = await fetch(endpoint, {
       method: "POST",
       body: formData,
       signal: controller.signal,
@@ -88,6 +95,7 @@ export default function Home() {
   const [generationError, setGenerationError] = useState<GenerationError | null>(null);
   const [minTimeElapsed, setMinTimeElapsed] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
+  const [lastProvider, setLastProvider] = useState<ImageProvider | null>(null);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
   const generationPromiseRef = useRef<Promise<GenerationOutcome> | null>(null);
   const camera = useCamera();
@@ -133,16 +141,18 @@ export default function Home() {
     }
 
     const world = selectWorld(WORLDS, previousWorldId ?? undefined);
+    const provider = getDebugProvider();
     setSelectedWorld(world);
+    setLastProvider(provider);
     setAppState("worldReveal");
 
     if (process.env.NODE_ENV !== "production") {
-      console.log(`Selected world: ${world.id}`);
+      console.log(`Selected world: ${world.id} | Provider: ${provider}`);
     }
 
     // Start generation immediately so the API latency overlaps with the
     // WorldReveal animation instead of stacking after it.
-    generationPromiseRef.current = runGeneration(captured.blob, world.id);
+    generationPromiseRef.current = runGeneration(captured.blob, world.id, provider);
   }, [previousWorldId]);
 
   const handleWorldRevealComplete = useCallback(async () => {
@@ -227,6 +237,9 @@ export default function Home() {
         <GeneratedView
           imageUrl={generatedImage.imageUrl}
           worldLabel={selectedWorld?.resultLabel}
+          debugProviderLabel={
+            lastProvider && isProviderDebugActive() ? PROVIDER_LABELS[lastProvider] : undefined
+          }
           onRetry={handleGenerationRetry}
         />
       )}
