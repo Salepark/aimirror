@@ -27,6 +27,7 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
   const [phase, setPhase] = useState<PlaybackPhase>("waiting");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const [isVideoPreloaded, setIsVideoPreloaded] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const hasStartedRef = useRef(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -84,6 +85,32 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
 
   const showVideo = phase === "revealing" || phase === "playing" || phase === "ended";
   const showWaitingText = phase === "waiting" && !failed;
+  const showSaveButton = hasVideo && phase !== "waiting";
+
+  const handleSaveVideo = async () => {
+    const videoUrl = living.videoUrl;
+    if (!videoUrl || isSaving) return;
+    setIsSaving(true);
+    try {
+      const response = await fetch(videoUrl);
+      if (!response.ok) throw new Error("Download fetch failed");
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = `ai-mirror-${worldId}.mp4`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      // Fallback: open the signed URL directly so the visitor can still
+      // save it manually (e.g. long-press on mobile) if the fetch fails.
+      window.open(videoUrl, "_blank", "noopener,noreferrer");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   return (
     <div className="relative flex h-full w-full items-center justify-center">
@@ -119,6 +146,17 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
         <p className="absolute bottom-28 animate-pulse text-xs font-light tracking-[0.2em] text-white/50">
           THIS LIFE IS BECOMING REAL...
         </p>
+      )}
+
+      {showSaveButton && (
+        <button
+          type="button"
+          onClick={handleSaveVideo}
+          disabled={isSaving}
+          className="absolute bottom-28 rounded-full border border-white/30 px-5 py-1.5 text-[10px] font-light tracking-[0.15em] text-white/60 transition disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          {isSaving ? "SAVING..." : "SAVE VIDEO"}
+        </button>
       )}
     </div>
   );
