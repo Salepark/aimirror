@@ -1,5 +1,8 @@
 "use client";
 
+// Reserved for a future version's "still image, subtly living" experiment.
+// Not wired into the v0.6 demo flow (see LivingVideo) — kept working and
+// unimported so it doesn't conflict with the current production path.
 import { useEffect, useRef, useState } from "react";
 import LivingStill from "@/components/LivingStill";
 import { useLivingPortrait } from "@/hooks/useLivingPortrait";

@@ -156,6 +156,7 @@ export default function Home() {
     const provider = getDebugProvider();
     setSelectedWorld(world);
     setLastProvider(provider);
+    setRecentWorldIds((prev) => [world.id, ...prev].slice(0, RECENT_WORLDS_LIMIT));
     setAppState("worldReveal");
 
     if (process.env.NODE_ENV !== "production") {
@@ -186,16 +187,13 @@ export default function Home() {
   }, []);
 
   const handleGenerationRetry = useCallback(() => {
-    setRecentWorldIds((prev) =>
-      selectedWorld ? [selectedWorld.id, ...prev].slice(0, RECENT_WORLDS_LIMIT) : prev
-    );
     setSelectedWorld(null);
     setGeneratedImage(null);
     setGenerationError(null);
     setLifeId(null);
     setMinTimeElapsed(false);
     setAppState("camera");
-  }, [selectedWorld]);
+  }, []);
 
   const canCapture = camera.isReady && minTimeElapsed;
   const cameraErrorInfo = camera.error ? CAMERA_ERROR_MESSAGES[camera.error] : null;

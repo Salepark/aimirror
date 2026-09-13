@@ -57,7 +57,7 @@ export async function startVeoJob({ worldImage, motionPrompt }: StartVeoJobInput
     },
     config: {
       aspectRatio: "9:16",
-      durationSeconds: 4,
+      durationSeconds: 8,
       resolution: "720p",
       personGeneration: "allow_adult",
       numberOfVideos: 1,

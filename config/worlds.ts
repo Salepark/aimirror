@@ -69,11 +69,15 @@ with the scale and realism of contemporary cinematic photography.
 Do not create a museum portrait against a plain background.
 
 We have caught this person in the middle of a real morning in Florence.`,
-    motionPrompt: `Fine dust drifts slowly through the morning light.
-The warm light shifts very subtly, as if the sun is barely moving.
-Distant workers move almost imperceptibly in the background.
-The person breathes naturally, with one small blink.
-Do not change their pose, gaze direction, or the drawing in their hand.`,
+    motionPrompt: `The construction site comes to life around the person.
+Stonecutters and craftsmen work steadily in the background,
+scaffolding creaks faintly, loose fabric and canvas sheets shift in the
+morning breeze, and fine dust drifts through the shafts of dawn light.
+The person looks down at the architectural drawings in their hands,
+then lifts their gaze to study the unfinished structure ahead,
+as if quietly reconsidering a decision.
+Camera performs a slow, gentle push-in toward the person.
+The scene settles as the person's attention returns calmly to the site.`,
     livingEffect: { type: "florence-dust", cameraMotion: "push-in" },
   },
   {
@@ -123,11 +127,15 @@ Not a royal portrait.
 Not a costume photograph.
 
 This person has somewhere urgent to be.`,
-    motionPrompt: `Fine snow falls continuously through the air.
-Mist drifts almost imperceptibly near the ground.
-The person's robe and hat straps move gently in the winter wind.
-A distant lantern flame flickers softly.
-The person breathes naturally, with one small blink. Do not make them step or turn.`,
+    motionPrompt: `Snow falls steadily through the cold dawn air.
+A gust of wind moves the person's robe and hat straps as distant
+lanterns flicker along the palace wall. Holding the wrapped royal
+report firmly, the person quickens their pace toward the palace,
+expression serious and purposeful, boots pressing fresh tracks into
+the snow. Mist drifts low across the ground behind them.
+Camera performs a slow tracking move alongside the person.
+As the palace gate draws near, the person's stride settles into a
+steady, determined walk.`,
     livingEffect: { type: "joseon-snow", cameraMotion: "push-in" },
   },
   {
@@ -171,11 +179,15 @@ Warm gaslight against cool evening blue.
 
 The scene should feel like a lost cinematic moment from 1889,
 not a vintage studio photograph.`,
-    motionPrompt: `Light rain falls continuously.
-Gaslight shimmers and reflects softly on the wet street.
-The person's coat moves very slightly in the breeze.
-A distant carriage or figure moves faintly in the background.
-The person breathes naturally, with one small blink. Do not make them turn or step.`,
+    motionPrompt: `Light rain falls steadily over the Paris street.
+A carriage rolls past behind the person, gaslight shimmering and
+reflecting across the wet pavement, and distant crowds murmur near the
+illuminated Eiffel Tower. The person turns their head slightly to look
+first at the passing street, then up toward the glowing Tower rising
+through the mist, their expression shifting from disbelief to
+fascination. Their coat stirs gently in the damp night breeze.
+Camera performs a slow push-in as the person's gaze settles on the
+Tower.`,
     livingEffect: { type: "paris-rain", cameraMotion: "push-in" },
   },
   {
@@ -219,10 +231,15 @@ This is a backstage moment before something important happens.
 
 Not an Art Deco fashion shoot.
 Not a studio portrait.`,
-    motionPrompt: `Smoke drifts slowly upward through the warm light.
-Warm tungsten light flickers gently on brass instruments in the background.
-Distant musicians move almost imperceptibly.
-The person breathes naturally, with one small blink. Do not make them step or turn.`,
+    motionPrompt: `The jazz club stirs to life below the stairway.
+Musicians on stage begin to play, cigarette smoke curls upward through
+warm tungsten light, and silhouettes of dancers sway faintly beyond the
+stairs. Hearing the band start their composition, the person descends
+a few more steps, gripping the folded musical score a little tighter
+and glancing down toward the stage with quiet anticipation.
+Camera performs a slow tracking move following the person down the
+stairs. Near the bottom, their pace eases into a confident, unhurried
+walk.`,
     livingEffect: { type: "newyork-smoke", cameraMotion: "push-in" },
   },
   {
@@ -278,12 +295,15 @@ Avoid Blade Runner imitation.
 Avoid neon cyberpunk clichés.
 
 This should feel like Seoul actually continued evolving for another 60 years.`,
-    motionPrompt: `Heavy rain moves continuously through the Seoul skyline.
-Distant aerial vehicles drift slowly across the scene.
-Lightning briefly illuminates the clouds once.
-City lights and reflections shimmer naturally on wet surfaces.
-The person's coat responds subtly to the wind.
-The person breathes naturally, with one small blink. Do not make them turn or step.`,
+    motionPrompt: `Heavy rain sweeps across the elevated walkway as the storm builds.
+Autonomous aerial vehicles drift through the skyline behind the
+person, and lightning briefly illuminates the clouds. Across the city,
+an entire section of lights suddenly goes dark. The person's coat
+whips in the wind as they turn slightly toward the darkened district,
+watching intently, their expression shifting to alarm.
+Camera performs a slow push-in on the person as the storm intensifies
+around them. The scene settles with the person still fixed on the
+anomaly, rain streaking past.`,
     livingEffect: { type: "seoul-storm", cameraMotion: "push-in" },
   },
   {
@@ -342,11 +362,15 @@ grounded in plausible Mars exploration technology.
 Not a portrait of someone wearing a spacesuit.
 
 This person is actually trying to survive on Mars.`,
-    motionPrompt: `Fine red dust drifts continuously through the air.
-Distant atmospheric dust moves slowly near the approaching storm.
-A faint reflection shifts across the transparent helmet visor.
-The suit fabric moves very slightly.
-Subtle breathing movement is visible inside the suit. Do not make the person turn or move their body.`,
+    motionPrompt: `The dust storm advances rapidly across the Martian horizon.
+Rover headlights sweep back toward the settlement as base lights flare
+against the reddening sky, and the person's suit fabric snaps in the
+rising wind. The person turns their helmeted head to track the
+storm's approach, a faint reflection shifting across the sealed
+transparent visor, their recognizable face still clearly visible
+underneath. Fine red dust streaks past in the foreground.
+Camera performs a slow pull-back, revealing the settlement behind the
+person as they hold their ground against the wind.`,
     livingEffect: { type: "mars-dust", cameraMotion: "push-in" },
   },
   {
@@ -396,10 +420,16 @@ Do not create anime.
 Do not create a normal photograph with an ink filter.
 
 Reality itself is becoming a painting.`,
-    motionPrompt: `Ink continues to diffuse very slowly from the person's sleeve into the air.
-Mist drifts almost imperceptibly between the distant mountains.
-Wet ink blooms slowly across the paper landscape.
-The person's hand, already raised, trembles only very slightly. Do not make them turn or gesture further.`,
+    motionPrompt: `Ink continues to spread from the person's sleeve, flowing outward in
+slow expressive strokes that dissolve part of their clothing into
+moving brushwork. Wet ink blooms and spreads across the paper
+landscape behind them, and distant mountains shift subtly within the
+drifting mist. The person watches their own hand as more of it
+dissolves into ink, their face remaining clear and recognizable
+throughout. Camera holds mostly still with only a minimal drift,
+matching the quiet, painterly mood.
+The ink's spread gently slows, leaving the scene suspended mid-
+transformation.`,
     livingEffect: { type: "ink-diffusion", cameraMotion: "minimal" },
   },
   {
@@ -443,10 +473,15 @@ Do not create a simple four-panel portrait.
 
 The idea is:
 a person discovers that the entire culture has turned their identity into an image.`,
-    motionPrompt: `Background billboards flicker occasionally between graphic versions of the person's face.
-Printed halftone patterns shift very subtly across surfaces.
-Distant pedestrians move as simplified graphic silhouettes.
-The person breathes naturally, with one small blink. Do not make them turn or gesture.`,
+    motionPrompt: `The surrounding billboards, screens and newspapers animate around the
+person, cycling through stylized graphic versions of their own face.
+Halftone patterns pulse and shift across surfaces, and simplified
+graphic silhouettes of pedestrians drift past in the background.
+The person turns their head slowly, looking from one screen to the
+next with growing confusion, recognizing their own image endlessly
+repeated. Camera performs a slow, playful push-in on the person.
+The barrage of imagery settles into a steady rhythmic pulse around
+them.`,
     livingEffect: { type: "pop-halftone", cameraMotion: "minimal" },
   },
   {
@@ -495,10 +530,14 @@ and dramatic lighting of great Baroque painting,
 while remaining a believable cinematic event.
 
 Something dangerous is happening outside the frame.`,
-    motionPrompt: `Candle flames flicker continuously, shifting the light and shadow very slowly.
-Tiny floating dust particles drift through the candlelight.
-A faint distant shadow moves once at the far end of the corridor.
-The person breathes naturally, with one small blink. Do not make them walk, turn, or glance back.`,
+    motionPrompt: `Candle flames flicker along the corridor, shadows shifting across the
+walls as fine dust drifts through the light. Holding the sealed letter
+close, the person moves forward through the corridor at a steady,
+urgent pace. Somewhere far down the hall, a faint shadow crosses once,
+implying distant footsteps, and the person glances briefly over their
+shoulder before continuing on. Camera performs a slow tracking move
+alongside the person through the chiaroscuro light.
+Their pace steadies again as the corridor stretches on ahead.`,
     livingEffect: { type: "baroque-candle", cameraMotion: "push-in" },
   },
   {
@@ -564,10 +603,15 @@ Preserve mystery.
 This person remembers our world.
 
 Nothing around them does.`,
-    motionPrompt: `Fine luminous particles drift slowly through the air.
-Atmospheric haze shifts almost imperceptibly around the distant structures.
-Very far in the background, the enormous living structures move almost imperceptibly, with a subtle distant light pulse.
-The person's eyes shift upward very slightly, with natural breathing and one small blink. Do not make them walk, speak, or turn.`,
+    motionPrompt: `The monumental post-human environment slowly stirs to life around
+the person. Distant structures shift and pulse with unfamiliar light,
+luminous particles drift through the air, and something vast moves
+almost imperceptibly on the horizon. The person takes a slow step
+forward from the chamber threshold and tilts their head upward,
+their expression shifting into quiet awe as the scale of the world
+becomes clear. Camera performs a slow pull-back, revealing more of the
+monumental scale surrounding the small human figure.
+The person remains still, gazing upward, as the scene settles.`,
     livingEffect: { type: "unknown-haze", cameraMotion: "pull-back" },
   },
 ];

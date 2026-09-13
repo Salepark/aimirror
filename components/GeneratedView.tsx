@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useLivingPortrait } from "@/hooks/useLivingPortrait";
 import LivingStill from "@/components/LivingStill";
-import LivingEnding from "@/components/LivingEnding";
+import LivingVideo from "@/components/LivingVideo";
 import type { LivingEffectConfig } from "@/config/worlds";
 
 const ENABLE_VEO_DEMO = process.env.NEXT_PUBLIC_ENABLE_VEO_DEMO === "true";
@@ -61,10 +61,9 @@ export default function GeneratedView({
           onLoad={() => setIsLoaded(true)}
         />
       ) : worldId && lifeId ? (
-        <LivingEnding
+        <LivingVideo
           imageUrl={imageUrl}
           worldId={worldId}
-          livingEffect={livingEffect}
           lifeId={lifeId}
           onImageLoad={() => setIsLoaded(true)}
         />
@@ -85,8 +84,8 @@ export default function GeneratedView({
 }
 
 // Dev/demo-only manual trigger, gated behind NEXT_PUBLIC_ENABLE_VEO_DEMO.
-// Visitors in normal mode never see this — see LivingEnding for the
-// automatic one-shot experience.
+// Visitors in normal mode never see this — see LivingVideo for the
+// automatic 8-second demo experience.
 function VeoDemo({
   imageUrl,
   worldId,
