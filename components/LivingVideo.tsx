@@ -54,6 +54,16 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
   const hasVideo = Boolean(living.videoUrl);
   const failed = living.state === "error";
 
+  // `canplaythrough` is unreliable on some mobile browsers (notably Safari)
+  // and can simply never fire for an otherwise perfectly playable video —
+  // fall back to revealing anyway after a few seconds so a flaky event
+  // doesn't strand the visitor on the still image forever.
+  useEffect(() => {
+    if (!hasVideo) return;
+    const fallback = setTimeout(() => setIsVideoPreloaded(true), 3000);
+    return () => clearTimeout(fallback);
+  }, [hasVideo]);
+
   // Once the video has preloaded enough to play smoothly, crossfade
   // immediately — there is no minimum still-display duration in this flow.
   useEffect(() => {
@@ -96,6 +106,7 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
           muted
           playsInline
           preload="auto"
+          onLoadedData={() => setIsVideoPreloaded(true)}
           onCanPlayThrough={() => setIsVideoPreloaded(true)}
           onEnded={() => setPhase("ended")}
           className={`pointer-events-none absolute inset-0 m-auto max-h-[85vh] max-w-full object-contain transition-opacity duration-300 ${
