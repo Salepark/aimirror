@@ -59,7 +59,11 @@ export default function LivingEnding({
 
     waitTimerRef.current = setTimeout(() => {
       setPhase("transitioning");
-      videoRef.current?.play().catch(() => {});
+      const video = videoRef.current;
+      if (video) {
+        video.muted = true;
+        video.play().catch(() => {});
+      }
       setTimeout(() => setPhase("playing"), TRANSITION_DURATION_MS);
     }, remaining);
 
