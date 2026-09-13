@@ -87,6 +87,13 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
   const showWaitingText = phase === "waiting" && !failed;
   const showSaveButton = hasVideo && phase !== "waiting";
 
+  const handleReplay = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.currentTime = 0;
+    video.play().catch(() => {});
+  };
+
   const handleSaveVideo = async () => {
     const videoUrl = living.videoUrl;
     if (!videoUrl || isSaving) return;
@@ -149,14 +156,23 @@ export default function LivingVideo({ imageUrl, worldId, lifeId, onImageLoad }: 
       )}
 
       {showSaveButton && (
-        <button
-          type="button"
-          onClick={handleSaveVideo}
-          disabled={isSaving}
-          className="absolute bottom-28 rounded-full border border-white/30 px-5 py-1.5 text-[10px] font-light tracking-[0.15em] text-white/60 transition disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          {isSaving ? "SAVING..." : "SAVE VIDEO"}
-        </button>
+        <div className="absolute bottom-28 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleReplay}
+            className="rounded-full border border-white/30 px-5 py-1.5 text-[10px] font-light tracking-[0.15em] text-white/60 transition"
+          >
+            REPLAY
+          </button>
+          <button
+            type="button"
+            onClick={handleSaveVideo}
+            disabled={isSaving}
+            className="rounded-full border border-white/30 px-5 py-1.5 text-[10px] font-light tracking-[0.15em] text-white/60 transition disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            {isSaving ? "SAVING..." : "SAVE VIDEO"}
+          </button>
+        </div>
       )}
     </div>
   );
